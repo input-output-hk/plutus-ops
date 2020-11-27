@@ -189,6 +189,22 @@
         "type": "github"
       }
     },
+    "plutus": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1606417529,
+        "narHash": "sha256-Jb+0ecphk+uJYrf8lHt3gU3qF/SQINbJjkSMtfZ/EOA=",
+        "owner": "input-output-hk",
+        "repo": "plutus",
+        "rev": "4f0353d0d04afef06ccaa4ae5b36f835620869a9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "input-output-hk",
+        "repo": "plutus",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "bitte": "bitte",
@@ -201,6 +217,7 @@
           "nixpkgs"
         ],
         "ops-lib": "ops-lib_2",
+        "plutus": "plutus",
         "terranix": [
           "bitte",
           "terranix"

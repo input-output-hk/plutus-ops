@@ -9,6 +9,10 @@
     terranix.follows = "bitte/terranix";
     utils.url = "github:numtide/flake-utils";
     ops-lib.url = "github:input-output-hk/ops-lib/zfs-image?dir=zfs";
+    plutus = {
+      url = "github:input-output-hk/plutus";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, utils, ops-lib, bitte, ... }:
