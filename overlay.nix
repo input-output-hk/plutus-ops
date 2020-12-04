@@ -3,6 +3,9 @@ let extraJobArgs = { };
 in final: prev:
 let lib = final.lib;
 in {
+  inherit (import self.inputs.plutus {
+    inherit system;
+  }) web-ghc;
 
   nomadJobs = let
     jobsDir = ./jobs;
@@ -58,6 +61,23 @@ in {
     buildLayeredImage;
 
   mkEnv = lib.mapAttrsToList (key: value: "${key}=${value}");
+
+  debugUtils = with final; [
+    bashInteractive
+    coreutils
+    curl
+    dnsutils
+    fd
+    gawk
+    gnugrep
+    iproute
+    jq
+    lsof
+    netcat
+    nettools
+    procps
+    tree
+  ];
 
   devShell = let
     cluster = "plutus-playground";
