@@ -5,6 +5,7 @@
     utils.url = "github:kreisys/flake-utils";
     bitte.url = "github:input-output-hk/bitte/clients-use-vault-agent";
     #bitte.url = "path:/home/clever/iohk/bitte";
+    bitte.inputs.bitte-cli.url = "github:input-output-hk/bitte-cli/v0.3.4";
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     nixpkgs.follows = "bitte/nixpkgs";
     bitte-ci.url = "github:input-output-hk/bitte-ci";
@@ -37,8 +38,9 @@
       # simpleFlake ignores devShell if we don't specify this.
       packages = { checkFmt, checkCue, web-ghc-server-entrypoint, plutus-playground-server-entrypoint, plutus-playground-client-entrypoint, marlowe-playground-server-entrypoint, marlowe-playground-client-entrypoint, marlowe-run-entrypoint, marlowe-website-entrypoint }@pkgs: pkgs;
 
-      devShell = { bitteShell, cue }:
-        (bitteShell {
+      devShell = { bitteShellCompat, cue }:
+        (bitteShellCompat {
+          inherit self;
           extraPackages = [ cue ];
           cluster = "plutus-playground";
           profile = "plutus";
