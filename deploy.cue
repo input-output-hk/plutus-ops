@@ -24,8 +24,6 @@ Namespace: [Name=_]: {
 		#flakes: [string]: types.#flake
 
 		#flakes: {
-			devBox: =~flakePath | *"github:input-output-hk/erc20-ops?rev=\(#opsRev)#devbox-entrypoint"
-			// frontend:                =~flakePath | *"github:input-output-hk/erc20-ops?rev=\(#opsRev)#frontend-foo-entrypoint"
 			webGhcServer:                =~flakePath | *"github:input-output-hk/plutus-ops?rev=\(#opsRev)#web-ghc-server-entrypoint"
 			"plutus-playground-server":  =~flakePath | *"github:input-output-hk/plutus-ops?rev=\(#opsRev)#plutus-playground-server-entrypoint"
 			"plutus-playground-client":  =~flakePath | *"github:input-output-hk/plutus-ops?rev=\(#opsRev)#plutus-playground-client-entrypoint"
