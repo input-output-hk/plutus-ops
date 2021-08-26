@@ -5,7 +5,7 @@
     utils.url = "github:kreisys/flake-utils";
     bitte.url = "github:input-output-hk/bitte/clients-use-vault-agent";
     #bitte.url = "path:/home/clever/iohk/bitte";
-    bitte.inputs.bitte-cli.url = "github:input-output-hk/bitte-cli/v0.3.4";
+    bitte.inputs.bitte-cli.url = "github:input-output-hk/bitte-cli/v0.3.5";
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     nixpkgs.follows = "bitte/nixpkgs";
     bitte-ci.url = "github:input-output-hk/bitte-ci";
