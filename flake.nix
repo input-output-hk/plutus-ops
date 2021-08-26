@@ -5,6 +5,7 @@
     utils.url = "github:kreisys/flake-utils";
     bitte.url = "github:input-output-hk/bitte/clients-use-vault-agent";
     #bitte.url = "path:/home/clever/iohk/bitte";
+    bitte.inputs.bitte-cli.url = "github:input-output-hk/bitte-cli/v0.3.5";
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     nixpkgs.follows = "bitte/nixpkgs";
     bitte-ci.url = "github:input-output-hk/bitte-ci";
@@ -15,7 +16,12 @@
 
   outputs = { self, nixpkgs, utils, bitte, ... }@inputs:
     utils.lib.simpleFlake {
-      inherit nixpkgs;
+      nixpkgs = nixpkgs // {
+        lib = nixpkgs.lib // {
+          # Needed until https://github.com/NixOS/nixpkgs/pull/135794
+          composeManyExtensions = exts: final: prev: nixpkgs.lib.composeManyExtensions exts final prev;
+        };
+      };
       systems = [ "x86_64-linux" ];
 
       preOverlays = [ bitte ];
@@ -35,10 +41,11 @@
       };
 
       # simpleFlake ignores devShell if we don't specify this.
-      packages = { checkFmt, checkCue, web-ghc-server-entrypoint, plutus-playground-server-entrypoint, plutus-playground-client-entrypoint, marlowe-playground-server-entrypoint, marlowe-playground-client-entrypoint }@pkgs: pkgs;
+      packages = { checkCue, web-ghc-server-entrypoint, plutus-playground-server-entrypoint, plutus-playground-client-entrypoint, marlowe-playground-server-entrypoint, marlowe-playground-client-entrypoint, marlowe-run-entrypoint, marlowe-website-entrypoint }@pkgs: pkgs;
 
-      devShell = { bitteShell, cue }:
-        (bitteShell {
+      devShell = { bitteShellCompat, cue }:
+        (bitteShellCompat {
+          inherit self;
           extraPackages = [ cue ];
           cluster = "plutus-playground";
           profile = "plutus";
