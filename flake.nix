@@ -11,7 +11,6 @@
     bitte-ci.url = "github:input-output-hk/bitte-ci";
     bitte-ci-frontend.follows = "bitte-ci/bitte-ci-frontend";
     ops-lib.url = "github:input-output-hk/ops-lib/zfs-image?dir=zfs";
-    plutus.url = "github:input-output-hk/plutus/bitte";
   };
 
   outputs = { self, nixpkgs, utils, bitte, ... }@inputs:
@@ -41,7 +40,7 @@
       };
 
       # simpleFlake ignores devShell if we don't specify this.
-      packages = { checkCue, web-ghc-server-entrypoint, plutus-playground-server-entrypoint, plutus-playground-client-entrypoint, marlowe-playground-server-entrypoint, marlowe-playground-client-entrypoint, marlowe-run-entrypoint, marlowe-website-entrypoint }@pkgs: pkgs;
+      packages = { checkCue }@pkgs: pkgs;
 
       devShell = { bitteShellCompat, cue }:
         (bitteShellCompat {

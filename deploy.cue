@@ -7,7 +7,7 @@ import (
 )
 
 let fqdn = "plutus.aws.iohkdev.io"
-let opsRev = "12f94a94d2943916d0db6494c312e34e8b5fb92f"
+let plutusRev = "6fcb3fd8fe4f6cfa77f33039f5596c7271954abc"
 
 Namespace: [Name=_]: {
 	vars: {
@@ -20,17 +20,17 @@ Namespace: [Name=_]: {
 		namespace:   Name
 		#domain:     string
 		#fqdn:       fqdn
-		#opsRev:     =~"^\(hex){40}$" | *opsRev
+		#plutusRev:     =~"^\(hex){40}$" | *plutusRev
 		#flakes: [string]: types.#flake
 
 		#flakes: {
-			webGhcServer:                =~flakePath | *"github:input-output-hk/plutus-ops?rev=\(#opsRev)#web-ghc-server-entrypoint"
-			"plutus-playground-server":  =~flakePath | *"github:input-output-hk/plutus-ops?rev=\(#opsRev)#plutus-playground-server-entrypoint"
-			"plutus-playground-client":  =~flakePath | *"github:input-output-hk/plutus-ops?rev=\(#opsRev)#plutus-playground-client-entrypoint"
-			"marlowe-playground-server": =~flakePath | *"github:input-output-hk/plutus-ops?rev=\(#opsRev)#marlowe-playground-server-entrypoint"
-			"marlowe-playground-client": =~flakePath | *"github:input-output-hk/plutus-ops?rev=\(#opsRev)#marlowe-playground-client-entrypoint"
-			marloweRun:                  =~flakePath | *"github:input-output-hk/plutus-ops?rev=\(#opsRev)#marlowe-run-entrypoint"
-			marloweWebsite:              =~flakePath | *"github:input-output-hk/plutus-ops?rev=\(#opsRev)#marlowe-website-entrypoint"
+			webGhcServer:                =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#web-ghc-server-entrypoint"
+			"plutus-playground-server":  =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#plutus-playground-server-entrypoint"
+			"plutus-playground-client":  =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#plutus-playground-client-entrypoint"
+			"marlowe-playground-server": =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#marlowe-playground-server-entrypoint"
+			"marlowe-playground-client": =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#marlowe-playground-client-entrypoint"
+			marloweRun:                  =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#marlowe-run-entrypoint"
+			marloweWebsite:              =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#marlowe-website-entrypoint"
 		}
 
 		#rateLimit: {

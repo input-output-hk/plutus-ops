@@ -12,50 +12,16 @@ let
   writeBashBinChecked = name: writeBashChecked "/bin/${name}";
 in {
   inherit writeBashChecked writeBashBinChecked;
-  plutus-source = builtins.fetchGit {
-    url = "https://github.com/input-output-hk/plutus";
-    rev = "4fc1d4ab5396f206319387e0283d597ea390f6b8";
-    ref = "master";
-  };
-
-
 
   checkCue = final.writeShellScriptBin "check_cue.sh" ''
     export PATH="$PATH:${lib.makeBinPath (with final; [ cue ])}"
     cue vet -c
   '';
 
-  # Any:
-  # - run of this command with a parameter different than the testnet (currently 10)
-  # - change in the genesis file here
-  # Requires an update on the mantis repository and viceversa
-  generate-mantis-keys = final.writeBashBinChecked "generate-mantis-keys" ''
-    export PATH="${
-      lib.makeBinPath (with final; [
-        coreutils
-        curl
-        gawk
-        gnused
-        gnused
-        jq
-        mantis
-        netcat
-        vault-bin
-        which
-        shellcheck
-        tree
-      ])
-    }"
-
-    . ${./pkgs/generate-mantis-keys.sh}
-  '';
-
-  plutus = import final.plutus-source { inherit (final) system; };
-
   devShell = let
     cluster = "plutus-playground";
     domain = final.clusters.${cluster}.proto.config.cluster.domain;
-  in prev.mkShell {
+  in final.mkShell {
     # for bitte-cli
     LOG_LEVEL = "debug";
 
@@ -90,7 +56,7 @@ in {
   };
 
   # Used for caching
-  devShellPath = prev.symlinkJoin {
+  devShellPath = final.symlinkJoin {
     paths = final.devShell.buildInputs;
     name = "devShell";
   };
@@ -111,43 +77,4 @@ in {
     procps
     tree
   ];
-
-
-  restic-backup = final.callPackage ./pkgs/backup { };
-
-  staticSite = final.callPackage ./pkgs/static-site.nix {};
-  playgroundStatic = final.callPackage ./pkgs/playground-static.nix {};
-
-  web-ghc-server = inputs.plutus.packages.x86_64-linux.web-ghc-server;
-  web-ghc-server-entrypoint = final.callPackage ./pkgs/web-ghc-server.nix {};
-
-  plutus-docs = inputs.plutus.packages.x86_64-linux.plutus-docs;
-
-  plutus-playground-server = inputs.plutus.packages.x86_64-linux.plutus-playground-server;
-  plutus-playground-server-entrypoint = final.callPackage ./pkgs/plutus-playground-server.nix { variant = "plutus"; pkg = final.plutus-playground-server; port = 4003; };
-
-  plutus-playground-client = inputs.plutus.packages.x86_64-linux.plutus-playground-client;
-  plutus-playground-client-entrypoint = final.playgroundStatic {
-    docs = final.plutus-docs;
-    client = final.plutus-playground-client;
-    variant = "plutus";
-    port = 8081;
-  };
-
-  marlowe-playground-server = inputs.plutus.packages.x86_64-linux.marlowe-playground-server;
-  marlowe-playground-server-entrypoint = final.callPackage ./pkgs/plutus-playground-server.nix { variant = "marlowe"; pkg = final.marlowe-playground-server; port = 4004; };
-  marlowe-playground-client = inputs.plutus.packages.x86_64-linux.marlowe-playground-client;
-  marlowe-playground-client-entrypoint = final.playgroundStatic {
-    docs = final.plutus-docs;
-    client = final.marlowe-playground-client;
-    variant = "marlowe";
-    port = 8087;
-  };
-
-  marlowe-pab = inputs.plutus.packages.x86_64-linux.marlowe-pab;
-  marlowe-run-client = inputs.plutus.packages.x86_64-linux.marlowe-run-client;
-  marlowe-run-entrypoint = final.callPackage ./pkgs/pab.nix { pabExe = "${final.marlowe-pab}/bin/marlowe-pab"; staticPkg = final.marlowe-run-client; };
-
-  marlowe-website = inputs.plutus.packages.x86_64-linux.marlowe-website;
-  marlowe-website-entrypoint = final.staticSite { root = final.marlowe-website; port = 8088; };
 }
