@@ -16,7 +16,12 @@
 
   outputs = { self, nixpkgs, utils, bitte, ... }@inputs:
     utils.lib.simpleFlake {
-      inherit nixpkgs;
+      nixpkgs = nixpkgs // {
+        lib = nixpkgs.lib // {
+          # Needed until https://github.com/NixOS/nixpkgs/pull/135794
+          composeManyExtensions = exts: final: prev: nixpkgs.lib.composeManyExtensions exts final prev;
+        };
+      };
       systems = [ "x86_64-linux" ];
 
       preOverlays = [ bitte ];
@@ -36,7 +41,7 @@
       };
 
       # simpleFlake ignores devShell if we don't specify this.
-      packages = { checkFmt, checkCue, web-ghc-server-entrypoint, plutus-playground-server-entrypoint, plutus-playground-client-entrypoint, marlowe-playground-server-entrypoint, marlowe-playground-client-entrypoint, marlowe-run-entrypoint, marlowe-website-entrypoint }@pkgs: pkgs;
+      packages = { checkCue, web-ghc-server-entrypoint, plutus-playground-server-entrypoint, plutus-playground-client-entrypoint, marlowe-playground-server-entrypoint, marlowe-playground-client-entrypoint, marlowe-run-entrypoint, marlowe-website-entrypoint }@pkgs: pkgs;
 
       devShell = { bitteShellCompat, cue }:
         (bitteShellCompat {

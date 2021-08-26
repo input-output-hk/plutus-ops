@@ -51,10 +51,6 @@ in {
   '';
 
   plutus = import final.plutus-source { inherit (final) system; };
-  checkFmt = final.writeShellScriptBin "check_fmt.sh" ''
-    export PATH="$PATH:${lib.makeBinPath (with final; [ git nixfmt gnugrep ])}"
-    . ${./pkgs/check_fmt.sh}
-  '';
 
   devShell = let
     cluster = "plutus-playground";
