@@ -1,3 +1,3 @@
 package bitte
 
-plutusRev: "6fcb3fd8fe4f6cfa77f33039f5596c7271954abc"
+plutusRev: "15f3ceb4ce4e5ab7a8ce78c5e523305f88129a2f"
