@@ -35,19 +35,12 @@
         inherit self inputs;
         inherit (hashiStack)
           clusters nomadJobs nixosConfigurations consulTemplates;
+        hydraJobs = self.packages;
       };
 
       # simpleFlake ignores devShell if we don't specify this.
-      packages = { checkCue }@pkgs: pkgs;
+      packages = { checkCue, devShellEnv }@pkgs: pkgs;
 
-      devShell = { bitteShellCompat, cue }:
-        (bitteShellCompat {
-          inherit self;
-          extraPackages = [ cue ];
-          cluster = "plutus-playground";
-          profile = "plutus";
-          region = "eu-central-1";
-          domain = "plutus.aws.iohkdev.io";
-        });
+      devShell = { devShell }: devShell;
     };
 }
