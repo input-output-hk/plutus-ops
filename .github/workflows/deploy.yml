@@ -1,0 +1,100 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: deploy
+    env:
+      BITTE_ADMIN_TOKEN: ${{ secrets.BITTE_ADMIN_TOKEN }}
+      SECRETS_TAR_GZ: ${{ secrets.SECRETS_TAR_GZ }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v13
+        with:
+          install_url: https://github.com/numtide/nix-unstable-installer/releases/download/nix-2.4pre20210823_af94b54/install
+          extra_nix_config: |
+            experimental-features = nix-command flakes ca-references
+            substituters = https://hydra.iohk.io https://iohk.cachix.org https://cache.nixos.org/ https://hydra.mantis.ist
+            trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= hydra.mantis.ist-1:4LTe7Q+5pm8+HawKxvmn2Hx0E3NbkYjtf1oWv+eAmTo=
+
+      - name: Prepare dev environment
+        run: |
+          nix -L build .#devShellEnv --out-link $RUNNER_TEMP/nix-dev-env.json
+          nix print-dev-env $RUNNER_TEMP/nix-dev-env.json > $RUNNER_TEMP/nix-dev-env
+
+      - name: Set up secrets
+        run: |
+          source $RUNNER_TEMP/nix-dev-env
+
+          cat > ~/.netrc <<EOF
+          machine github.com
+          password $BITTE_ADMIN_TOKEN
+          EOF
+
+          echo "$BITTE_ADMIN_TOKEN" | vault login -method=github -path github-employees -no-print token=-
+
+          vault read aws/creds/admin -format=json > $RUNNER_TEMP/aws-creds.json
+          access=$(jq -r .data.access_key < $RUNNER_TEMP/aws-creds.json)
+          secret=$(jq -r .data.secret_key < $RUNNER_TEMP/aws-creds.json)
+          rm $RUNNER_TEMP/aws-creds.json
+          mkdir -p ~/.aws
+          cat > ~/.aws/credentials <<EOF
+          [plutus]
+          aws_access_key_id = $access
+          aws_secret_access_key = $secret
+          EOF
+
+          export NOMAD_TOKEN="$(vault read -field secret_id nomad/creds/"$(
+            vault token lookup -format=json 2>/dev/null | jq -r '.data.policies[0]'
+          )")"
+          echo "export NOMAD_TOKEN=\"$NOMAD_TOKEN\"" >> $RUNNER_TEMP/nix-dev-env
+
+          echo "$SECRETS_TAR_GZ" | base64 --decode | tar xz
+
+          # Wait until credentials propagate
+          total_wait=0
+          delay=1
+          aws_ready=0
+          nomad_ready=0
+          while [ "$total_wait" -lt 120 ]
+          do
+            if [ "$aws_ready" -eq 0 ]
+            then
+              # We use this instead of iam get-user because it's region-specific, wheras iam get-user is global
+              # This is perhaps superstition but we had several instances where get-user succeeded and the bitte deploy failed
+              if aws ec2 describe-account-attributes &>/dev/null
+              then
+                aws_ready=1
+              fi
+            fi
+            if [ "$nomad_ready" -eq 0 ]
+            then
+              if nomad acl token self &>/dev/null
+              then
+                nomad_ready=1
+              fi
+            fi
+            if [ "$aws_ready" -eq 1 -a "$nomad_ready" -eq 1 ]
+            then
+              break
+            fi
+            sleep $delay
+            total_wait=$(( total_wait + delay ))
+            delay=$(( delay * 2 ))
+          done
+          [ "$aws_ready" -eq 1 ] || aws ec2 describe-account-attributes
+          [ "$nomad_ready" -eq 1 ] || nomad acl token self
+
+      - name: Deploy infra
+        run: source $RUNNER_TEMP/nix-dev-env && bitte rebuild
+
+      - name: Deploy jobs
+        run: source $RUNNER_TEMP/nix-dev-env && yes yes | iogo plan plutus-playground
