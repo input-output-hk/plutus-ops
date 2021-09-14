@@ -94,7 +94,7 @@ jobs:
           [ "$nomad_ready" -eq 1 ] || nomad acl token self
 
       - name: Deploy infra
-        run: source $RUNNER_TEMP/nix-dev-env && bitte rebuild
+        run: source $RUNNER_TEMP/nix-dev-env && bitte rebuild --delay 30
 
       - name: Deploy jobs
         run: source $RUNNER_TEMP/nix-dev-env && yes yes | iogo plan plutus-playground
