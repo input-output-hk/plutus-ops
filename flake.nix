@@ -35,7 +35,9 @@
         inherit self inputs;
         inherit (hashiStack)
           clusters nomadJobs nixosConfigurations consulTemplates;
-        hydraJobs = self.packages;
+        hydraJobs.x86_64-linux = self.packages.x86_64-linux // (builtins.mapAttrs (_: config:
+          config.config.system.build.toplevel
+        ) self.nixosConfigurations);
       };
 
       # simpleFlake ignores devShell if we don't specify this.
