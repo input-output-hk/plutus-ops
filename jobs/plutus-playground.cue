@@ -8,6 +8,7 @@ import (
 #PlutusPlaygroundJob: types.#stanza.job & {
 	#domain:         string
 	#fqdn:           string
+	#domainNS:       string
 	#flakes: [string]: types.#flake
 	#hosts:          string
 	#variant:        string
@@ -18,7 +19,7 @@ import (
 		burst:   uint
 		period:  types.#duration
 	}
-	#hosts: "`\(#domain)`,`client.\(#fqdn)`"
+	#hosts: "`\(#domain)`,`client-\(#domainNS).\(#fqdn)`"
 
 	namespace: string
 
@@ -91,7 +92,7 @@ import (
 			#variant: ref.variant
 			#domain: ref.domain
 			#extraEnv: {
-				WEBGHC_URL: "web-ghc.\(#fqdn)"
+				WEBGHC_URL: "web-ghc-\(#domainNS).\(#fqdn)"
 				FRONTEND_URL: "https://\(#domain)"
 				GITHUB_CALLBACK_PATH: "/#/gh-oauth-cb"
 				PORT: "\(#serverPort)"

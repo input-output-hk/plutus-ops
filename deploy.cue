@@ -52,12 +52,14 @@ Namespace: [Name=_]: {
 	}
 	"plutus-playground": jobDef.#PlutusPlaygroundJob & {
 		#domain:      "plutus-playground-\(#namespace).\(fqdn)"
+		#domainNS:    #namespace
 		#variant:     "plutus"
 		#clientPort:  #portBase + 1
 		#serverPort:  #portBase + 2
 	}
 	"marlowe-playground": jobDef.#PlutusPlaygroundJob & {
 		#domain:      "marlowe-playground-\(#namespace).\(fqdn)"
+		#domainNS:    #namespace
 		#variant:     "marlowe"
 		#clientPort:  #portBase + 3
 		#serverPort:  #portBase + 4
