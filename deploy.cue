@@ -3,6 +3,7 @@ package bitte
 import (
 	"github.com/input-output-hk/plutus-ops/pkg/schemas/nomad:types"
 	jobDef "github.com/input-output-hk/plutus-ops/pkg/jobs:jobs"
+	"github.com/input-output-hk/plutus-ops/pkg/revisions:revisions"
 	"list"
 )
 
@@ -19,7 +20,7 @@ Namespace: [Name=_]: {
 		namespace:   Name
 		#domain:     string
 		#fqdn:       fqdn
-		#plutusRev:     =~"^\(hex){40}$" | *plutusRev
+		#plutusRev:     =~"^\(hex){40}$"
 		#flakes: [string]: types.#flake
 
 		#flakes: {
@@ -41,37 +42,48 @@ Namespace: [Name=_]: {
 	jobs: [string]: types.#stanza.job
 }
 
+#jobs: {
+	#namespace: string
+	#portBase: uint
+
+	"web-ghc-server": jobDef.#WebGhcServerJob & {
+		#domain: "web-ghc-\(#namespace).\(fqdn)"
+		#port: #portBase
+	}
+	"plutus-playground": jobDef.#PlutusPlaygroundJob & {
+		#domain:      "plutus-playground-\(#namespace).\(fqdn)"
+		#variant:     "plutus"
+		#clientPort:  #portBase + 1
+		#serverPort:  #portBase + 2
+	}
+	"marlowe-playground": jobDef.#PlutusPlaygroundJob & {
+		#domain:      "marlowe-playground-\(#namespace).\(fqdn)"
+		#variant:     "marlowe"
+		#clientPort:  #portBase + 3
+		#serverPort:  #portBase + 4
+	}
+	"marlowe-website": jobDef.#MarloweWebsiteJob & {
+		#domain:      "marlowe-website-\(#namespace).\(fqdn)"
+		#port: #portBase + 5
+	}
+	"marlowe-run": jobDef.#MarloweRunJob & {
+		#domain:      "marlowe-run-\(#namespace).\(fqdn)"
+		#portRangeBase:  #portBase + 6
+	}
+}
+
 #namespaces: Namespace
 
 #namespaces: {
-	"plutus-playground": {
+	"production": {
 		vars: {
-			// Namespace specific var overrides and additions
-			// #opsRev: ""
+			#plutusRev: revisions["production"]
 		}
-		jobs: {
-			"web-ghc-server": jobDef.#WebGhcServerJob & {
-				#domain: "web-ghc.\(fqdn)"
-			}
-			"plutus-playground": jobDef.#PlutusPlaygroundJob & {
-				#domain:      "plutus-playground.\(fqdn)"
-				#variant:     "plutus"
-				#clientPort:  8081
-				#serverPort:  4003
-			}
-			"marlowe-playground": jobDef.#PlutusPlaygroundJob & {
-				#domain:      "marlowe-playground.\(fqdn)"
-				#variant:     "marlowe"
-				#clientPort:  8087
-				#serverPort:  4004
-			}
-			"marlowe-run": jobDef.#MarloweRunJob & {
-				#domain:      "marlowe-run.\(fqdn)"
-			}
-			"marlowe-website": jobDef.#MarloweWebsiteJob & {
-				#domain:      "marlowe-website.\(fqdn)"
-			}
+		jobs: #jobs & {
+			#namespace: "prod"
+			#portBase: 1776
 		}
+
 	}
 }
 

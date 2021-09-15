@@ -97,4 +97,9 @@ jobs:
         run: source $RUNNER_TEMP/nix-dev-env && bitte rebuild --delay 30
 
       - name: Deploy jobs
-        run: source $RUNNER_TEMP/nix-dev-env && yes yes | iogo plan plutus-playground
+        run: |
+          source $RUNNER_TEMP/nix-dev-env
+          for env in $(cue eval -e "[ for n, v in #namespaces { n }]" --out json | jq -rc '.[]')
+          do
+            yes yes | iogo plan $env
+          done

@@ -33,7 +33,7 @@ in {
     };
   };
 
-  services.nomad.namespaces = { plutus-playground.description = "Playground"; };
+  services.nomad.namespaces = { production.description = "Production"; };
 
   users.extraUsers.root.openssh.authorizedKeys.keys = pkgs.ssh-keys.devOps ++ [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID/fJqgjwPG7b5SRPtCovFmtjmAksUSNg3xHWyqBM4Cs shlevy@shlevy-laptop"

@@ -16,6 +16,7 @@ import (
 		period:  types.#duration
 	}
         #hosts: "`\(#domain)`,`marlowe-website.\(#fqdn)`"
+        #port: uint
 
 	namespace: string
 
@@ -24,7 +25,7 @@ import (
 	group: server: {
 		network: {
 			mode: "host"
-			port: "marlowe-website": { static: 8088 }
+			port: "marlowe-website": { static: #port }
 		}
 		count: 1
 
@@ -60,6 +61,9 @@ import (
 			#fqdn: #fqdn
 			#memory: 32
 			#domain: #domain
+			#extraEnv: {
+				PORT: "\(#port)"
+			}
 		}
 	}
 }

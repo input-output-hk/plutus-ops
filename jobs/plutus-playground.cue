@@ -79,6 +79,9 @@ import (
 			#memory: 32
 			#variant: ref.variant
 			#domain: ref.domain
+			#extraEnv: {
+				PORT: "\(#clientPort)"
+			}
 		}
 
 		task: "server": tasks.#SimpleTask & {
@@ -91,6 +94,7 @@ import (
 				WEBGHC_URL: "web-ghc.\(#fqdn)"
 				FRONTEND_URL: "https://\(#domain)"
 				GITHUB_CALLBACK_PATH: "/#/gh-oauth-cb"
+				PORT: "\(#serverPort)"
 			}
       #envTemplate: """
         {{with secret "kv/nomad-cluster/\(#namespace)/\(#variant)/github"}}

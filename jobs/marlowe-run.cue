@@ -15,6 +15,7 @@ import (
                 burst:   uint
                 period:  types.#duration
         }
+        #portRangeBase: uint
         #hosts: "`\(#domain)`,`marlowe-run.\(#fqdn)`"
 
         namespace: string
@@ -24,12 +25,11 @@ import (
         group: server: {
                 network: {
                         mode: "host"
-                        port: "marlowe-run": { static: 9080 }
-                        port: "pab-node": { static: 8082 }
-                        port: "pab-chain-index": { static: 8083 }
-                        port: "pab-signing-process": { static: 8084 }
-                        port: "pab-metadata": { static: 8085 }
-                        port: "pab-wallet": { static: 8086 }
+                        port: "marlowe-run": { static: #portRangeBase }
+                        port: "pab-node": { static: #portRangeBase + 1 }
+                        port: "pab-chain-index": { static: #portRangeBase + 2 }
+                        port: "pab-signing-process": { static: #portRangeBase + 3 }
+                        port: "pab-wallet": { static: #portRangeBase + 4 }
                 }
                 count: 1
 
@@ -74,6 +74,9 @@ import (
                         #volumeMount: "pab": types.#stanza.volume_mount & {
                           volume: "pab"
                           destination: "/var/lib/pab"
+                        }
+                        #extraEnv: {
+                                PORT_RANGE_BASE: "\(#portRangeBase)"
                         }
                 }
         }
