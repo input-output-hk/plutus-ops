@@ -33,7 +33,15 @@ in {
     };
   };
 
-  services.nomad.namespaces = { production.description = "Production"; };
+  services.nomad.namespaces = {
+    production.description = "Marlowe Production";
+
+    plutus-production.description = "Plutus Apps Production";
+
+    staging.description = "Staging";
+
+    wyohack.description = "Marlowe - Wyoming Hackathon 2021";
+  };
 
   users.extraUsers.root.openssh.authorizedKeys.keys = pkgs.ssh-keys.devOps ++ [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID/fJqgjwPG7b5SRPtCovFmtjmAksUSNg3xHWyqBM4Cs shlevy@shlevy-laptop"
@@ -57,12 +65,8 @@ in {
 
     autoscalingGroups = listToAttrs (forEach [{
       region = "eu-central-1";
-      desiredCapacity = 2;
+      desiredCapacity = 8;
     }
-    #{
-    #  region = "us-east-2";
-    #  desiredCapacity = 8;
-    #}
       ] (args:
         let
           attrs = ({

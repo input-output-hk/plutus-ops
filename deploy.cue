@@ -87,6 +87,36 @@ Namespace: [Name=_]: {
 		}
 
 	}
+	"staging": {
+		vars: {
+			#plutusRev: revisions["staging"]
+		}
+		jobs: #jobs & {
+			#namespace: "staging"
+			#portBase: 1787
+		}
+
+	}
+	"plutus-production": {
+		vars: {
+			#plutusRev: revisions["plutus-production"]
+		}
+		jobs: #jobs & {
+			#namespace: "plutus-apps-prod"
+			#portBase: 1798
+		}
+
+	}
+	"wyohack": {
+		vars: {
+			#plutusRev: revisions["wyohack"]
+		}
+		jobs: #jobs & {
+			#namespace: "wyohack"
+			#portBase: 1809
+		}
+
+	}
 }
 
 for nsName, nsValue in #namespaces {
