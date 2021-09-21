@@ -93,8 +93,19 @@ jobs:
           [ "$aws_ready" -eq 1 ] || aws ec2 describe-account-attributes
           [ "$nomad_ready" -eq 1 ] || nomad acl token self
 
-      - name: Deploy infra
-        run: source $RUNNER_TEMP/nix-dev-env && bitte rebuild --delay 30
+      # To get faster deploys for now, we assume that any tf or NixOS
+      # changes were applied already.
+      # - name: Deploy infra
+      #   run: |
+      #     source $RUNNER_TEMP/nix-dev-env
+      #     for ws in network core consul clients
+      #     do
+      #       bitte tf $ws plan
+      #       bitte tf $ws apply
+      #     done
+      #
+      # - name: Deploy systems
+      #   run: source $RUNNER_TEMP/nix-dev-env && bitte rebuild --delay 30
 
       - name: Deploy jobs
         run: |
