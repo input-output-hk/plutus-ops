@@ -19,7 +19,14 @@ import (
 		burst:   uint
 		period:  types.#duration
 	}
-	#hosts: "`\(#domain)`,`client-\(#domainNS).\(#fqdn)`"
+
+	let needsPlaygroundDomain = #domainNS == "plutus-apps-prod" && #variant == "plutus"
+	if needsPlaygroundDomain {
+		#hosts: "`playground.plutus.iohkdev.io`"
+	}
+	if ! needsPlaygroundDomain {
+		#hosts: "`\(#domain)`"
+	}
 
 	namespace: string
 
@@ -93,7 +100,13 @@ import (
 			#domain: ref.domain
 			#extraEnv: {
 				WEBGHC_URL: "web-ghc-\(#domainNS).\(#fqdn)"
-				FRONTEND_URL: "https://\(#domain)"
+				if needsPlaygroundDomain {
+					FRONTEND_URL: "https://playground.plutus.iohkdev.io"
+				}
+				if ! needsPlaygroundDomain {
+					FRONTEND_URL: "https://\(#domain)"
+				}
+
 				GITHUB_CALLBACK_PATH: "/#/gh-oauth-cb"
 				PORT: "\(#serverPort)"
 			}

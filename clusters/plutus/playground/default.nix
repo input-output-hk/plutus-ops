@@ -55,6 +55,10 @@ in {
     developerGithubNames = [ ];
     developerGithubTeamNames = [ "plutus" ];
     domain = "plutus.aws.iohkdev.io";
+    extraAcmeSANs = [
+      # "*.marlowe-finance.io" # pending DNS change
+      "playground.plutus.iohkdev.io"
+    ];
     kms =
       "arn:aws:kms:eu-central-1:048156180985:key/7aa3ec8c-168f-42b8-9f77-6f5d7a9002d0";
     s3Bucket = "plutus-ops";
