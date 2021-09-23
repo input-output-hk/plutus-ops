@@ -51,7 +51,12 @@ Namespace: [Name=_]: {
 		#port: #portBase
 	}
 	"plutus-playground": jobDef.#PlutusPlaygroundJob & {
-		#domain:      "plutus-playground-\(#namespace).\(fqdn)"
+		if #namespace == "plutus-apps-prod" {
+			#domain:      "playground.plutus.iohkdev.io"
+		}
+		if #namespace != "plutus-apps-prod" {
+			#domain:      "plutus-playground-\(#namespace).\(fqdn)"
+		}
 		#domainNS:    #namespace
 		#variant:     "plutus"
 		#clientPort:  #portBase + 1
