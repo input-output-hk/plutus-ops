@@ -63,18 +63,33 @@ Namespace: [Name=_]: {
 		#serverPort:  #portBase + 2
 	}
 	"marlowe-playground": jobDef.#PlutusPlaygroundJob & {
-		#domain:      "marlowe-playground-\(#namespace).\(fqdn)"
+		if #namespace == "prod" {
+			#domain:      "play.marlowe-finance.io"
+		}
+		if #namespace != "prod" {
+			#domain:      "marlowe-playground-\(#namespace).\(fqdn)"
+		}
 		#domainNS:    #namespace
 		#variant:     "marlowe"
 		#clientPort:  #portBase + 3
 		#serverPort:  #portBase + 4
 	}
 	"marlowe-website": jobDef.#MarloweWebsiteJob & {
-		#domain:      "marlowe-website-\(#namespace).\(fqdn)"
+		if #namespace == "prod" {
+			#domain:      "marlowe-finance.io"
+		}
+		if #namespace != "prod" {
+			#domain:      "marlowe-website-\(#namespace).\(fqdn)"
+		}
 		#port: #portBase + 5
 	}
 	"marlowe-run": jobDef.#MarloweRunJob & {
-		#domain:      "marlowe-run-\(#namespace).\(fqdn)"
+		if #namespace == "prod" {
+			#domain:      "run.marlowe-finance.io"
+		}
+		if #namespace != "prod" {
+			#domain:      "marlowe-run-\(#namespace).\(fqdn)"
+		}
 		#portRangeBase:  #portBase + 6
 	}
 }

@@ -15,7 +15,7 @@ import (
 		burst:   uint
 		period:  types.#duration
 	}
-        #hosts: "`\(#domain)`,`marlowe-website.\(#fqdn)`"
+        #hosts: "`\(#domain)`"
         #port: uint
 
 	namespace: string

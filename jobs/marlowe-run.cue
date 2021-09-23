@@ -16,7 +16,7 @@ import (
                 period:  types.#duration
         }
         #portRangeBase: uint
-        #hosts: "`\(#domain)`,`marlowe-run.\(#fqdn)`"
+        #hosts: "`\(#domain)`"
 
         namespace: string
 

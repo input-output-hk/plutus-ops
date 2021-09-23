@@ -56,7 +56,8 @@ in {
     developerGithubTeamNames = [ "plutus" ];
     domain = "plutus.aws.iohkdev.io";
     extraAcmeSANs = [
-      # "*.marlowe-finance.io" # pending DNS change
+      "*.marlowe-finance.io"
+      "marlowe-finance.io"
       "playground.plutus.iohkdev.io"
     ];
     kms =
