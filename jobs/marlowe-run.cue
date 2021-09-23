@@ -69,7 +69,7 @@ import (
                         #flake:     #flakes.marloweRun
                         #namespace: namespace
                         #fqdn: #fqdn
-                        #memory: 1024
+                        #memory: 8129
                         #domain: #domain
                         #volumeMount: "pab": types.#stanza.volume_mount & {
                           volume: "pab"
