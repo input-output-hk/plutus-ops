@@ -1,3 +1,3 @@
 package revisions
 
-"production": "92f265aeae3174f1b3f13f598b7ab76730beaab1"
+"production": "40610ffd49c52135591fb9882263c7d00947452f"
