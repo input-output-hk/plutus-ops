@@ -1,3 +1,3 @@
 package revisions
 
-"staging": "affe394ca4a7c836bfff99f0203162ac66efd466"
+"staging": "82d45179b1ab8c43d4725b0522c00e2cdbe1f24c"
