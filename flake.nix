@@ -16,7 +16,8 @@
       nixpkgs = nixpkgs // {
         lib = nixpkgs.lib // {
           # Needed until https://github.com/NixOS/nixpkgs/pull/135794
-          composeManyExtensions = exts: final: prev: nixpkgs.lib.composeManyExtensions exts final prev;
+          composeManyExtensions = exts: final: prev:
+            nixpkgs.lib.composeManyExtensions exts final prev;
         };
       };
       systems = [ "x86_64-linux" ];
@@ -35,9 +36,9 @@
         inherit self inputs;
         inherit (hashiStack)
           clusters nomadJobs nixosConfigurations consulTemplates;
-        hydraJobs.x86_64-linux = self.packages.x86_64-linux // (builtins.mapAttrs (_: config:
-          config.config.system.build.toplevel
-        ) self.nixosConfigurations);
+        hydraJobs.x86_64-linux = self.packages.x86_64-linux
+          // (builtins.mapAttrs (_: config: config.config.system.build.toplevel)
+            self.nixosConfigurations);
       };
 
       # simpleFlake ignores devShell if we don't specify this.

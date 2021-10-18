@@ -103,9 +103,11 @@ in {
 
     instances = {
       core-1 = {
-        instanceType = "t3a.medium";
+        instanceType = "t3a.large";
         privateIP = "172.16.0.10";
         subnet = cluster.vpc.subnets.core-1;
+        ami = "ami-0a1a94722dcbff94c";
+        ebsOptimized = true;
 
         modules =
           [ (bitte + /profiles/core.nix) (bitte + /profiles/bootstrapper.nix) ];
@@ -117,9 +119,11 @@ in {
       };
 
       core-2 = {
-        instanceType = "t3a.medium";
+        instanceType = "t3a.large";
         privateIP = "172.16.1.10";
         subnet = cluster.vpc.subnets.core-2;
+        ami = "ami-0a1a94722dcbff94c";
+        ebsOptimized = true;
 
         modules = [ (bitte + /profiles/core.nix) ];
 
@@ -132,6 +136,8 @@ in {
         instanceType = "t3a.medium";
         privateIP = "172.16.2.10";
         subnet = cluster.vpc.subnets.core-3;
+        ami = "ami-0a1a94722dcbff94c";
+        ebsOptimized = false;
 
         modules = [ (bitte + /profiles/core.nix) ];
 
@@ -144,6 +150,7 @@ in {
         instanceType = "t3a.large";
         privateIP = "172.16.0.20";
         subnet = cluster.vpc.subnets.core-1;
+        ami = "ami-0a1a94722dcbff94c";
         volumeSize = 500;
         route53.domains = [
           "consul.${cluster.domain}"
@@ -165,6 +172,7 @@ in {
         instanceType = "t3a.small";
         privateIP = "172.16.1.40";
         subnet = cluster.vpc.subnets.core-2;
+        ami = "ami-0a1a94722dcbff94c";
         volumeSize = 100;
         route53.domains = [ "*.${cluster.domain}" ];
 
