@@ -2,7 +2,8 @@
 let
   inherit (pkgs.terralib) sops2kms sops2region cidrsOf;
   inherit (builtins) readFile replaceStrings;
-  inherit (lib) mapAttrs' nameValuePair flip attrValues listToAttrs forEach recursiveUpdate;
+  inherit (lib)
+    mapAttrs' nameValuePair flip attrValues listToAttrs forEach recursiveUpdate;
   inherit (config) cluster;
   inherit (import ./security-group-rules.nix { inherit config pkgs lib; })
     securityGroupRules;
@@ -71,35 +72,34 @@ in {
     autoscalingGroups = listToAttrs (forEach [{
       region = "eu-central-1";
       desiredCapacity = 8;
-    }
-      ] (args:
-        let
-          attrs = ({
-            desiredCapacity = 1;
-            maxSize = 40;
-            instanceType = "c5.2xlarge";
-            associatePublicIP = true;
-            maxInstanceLifetime = 0;
-            iam.role = cluster.iam.roles.client;
-            iam.instanceProfile.role = cluster.iam.roles.client;
+    }] (args:
+      let
+        attrs = ({
+          desiredCapacity = 1;
+          maxSize = 40;
+          instanceType = "c5.2xlarge";
+          associatePublicIP = true;
+          maxInstanceLifetime = 0;
+          iam.role = cluster.iam.roles.client;
+          iam.instanceProfile.role = cluster.iam.roles.client;
 
-            modules = [
-              (bitte + /profiles/client.nix)
-              ./marlowe-run.nix
-              self.inputs.ops-lib.nixosModules.zfs-runtime
-              "${self.inputs.nixpkgs}/nixos/modules/profiles/headless.nix"
-              "${self.inputs.nixpkgs}/nixos/modules/virtualisation/ec2-data.nix"
-            ];
+          modules = [
+            (bitte + /profiles/client.nix)
+            ./marlowe-run.nix
+            self.inputs.ops-lib.nixosModules.zfs-runtime
+            "${self.inputs.nixpkgs}/nixos/modules/profiles/headless.nix"
+            "${self.inputs.nixpkgs}/nixos/modules/virtualisation/ec2-data.nix"
+          ];
 
-            securityGroupRules = {
-              inherit (securityGroupRules) internet internal ssh;
-            };
-            ami = amis.${args.region};
-          } // args);
-          asgName = "client-${attrs.region}-${
-              replaceStrings [ "." ] [ "-" ] attrs.instanceType
-            }";
-        in nameValuePair asgName attrs));
+          securityGroupRules = {
+            inherit (securityGroupRules) internet internal ssh;
+          };
+          ami = amis.${args.region};
+        } // args);
+        asgName = "client-${attrs.region}-${
+            replaceStrings [ "." ] [ "-" ] attrs.instanceType
+          }";
+      in nameValuePair asgName attrs));
 
     instances = {
       core-1 = {
@@ -110,9 +110,15 @@ in {
         ebsOptimized = true;
         volumeSize = 100;
 
-        modules = [ (bitte + /profiles/core.nix)
+        modules = [
+          (bitte + /profiles/core.nix)
           (bitte + /profiles/bootstrapper.nix)
-          ({ services.consul-snapshots.hourly = recursiveUpdate config.services.consul-snapshots.hourly { backupCount = 48; }; })
+          ({
+            services.consul-snapshots.hourly =
+              recursiveUpdate config.services.consul-snapshots.hourly {
+                backupCount = 48;
+              };
+          })
         ];
 
         securityGroupRules = {
@@ -131,7 +137,12 @@ in {
 
         modules = [
           (bitte + /profiles/core.nix)
-          ({ services.consul-snapshots.hourly = recursiveUpdate config.services.consul-snapshots.hourly { backupCount = 48; }; })
+          ({
+            services.consul-snapshots.hourly =
+              recursiveUpdate config.services.consul-snapshots.hourly {
+                backupCount = 48;
+              };
+          })
         ];
 
         securityGroupRules = {
@@ -149,7 +160,12 @@ in {
 
         modules = [
           (bitte + /profiles/core.nix)
-          ({ services.consul-snapshots.hourly = recursiveUpdate config.services.consul-snapshots.hourly { backupCount = 48; }; })
+          ({
+            services.consul-snapshots.hourly =
+              recursiveUpdate config.services.consul-snapshots.hourly {
+                backupCount = 48;
+              };
+          })
         ];
 
         securityGroupRules = {
