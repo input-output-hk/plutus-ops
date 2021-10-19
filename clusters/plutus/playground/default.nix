@@ -2,7 +2,7 @@
 let
   inherit (pkgs.terralib) sops2kms sops2region cidrsOf;
   inherit (builtins) readFile replaceStrings;
-  inherit (lib) mapAttrs' nameValuePair flip attrValues listToAttrs forEach;
+  inherit (lib) mapAttrs' nameValuePair flip attrValues listToAttrs forEach recursiveUpdate;
   inherit (config) cluster;
   inherit (import ./security-group-rules.nix { inherit config pkgs lib; })
     securityGroupRules;
@@ -108,9 +108,12 @@ in {
         subnet = cluster.vpc.subnets.core-1;
         ami = "ami-0a1a94722dcbff94c";
         ebsOptimized = true;
+        volumeSize = 100;
 
-        modules =
-          [ (bitte + /profiles/core.nix) (bitte + /profiles/bootstrapper.nix) ];
+        modules = [ (bitte + /profiles/core.nix)
+          (bitte + /profiles/bootstrapper.nix)
+          ({ services.consul-snapshots.hourly = recursiveUpdate config.services.consul-snapshots.hourly { backupCount = 48; }; })
+        ];
 
         securityGroupRules = {
           inherit (securityGroupRules)
@@ -124,8 +127,12 @@ in {
         subnet = cluster.vpc.subnets.core-2;
         ami = "ami-0a1a94722dcbff94c";
         ebsOptimized = true;
+        volumeSize = 100;
 
-        modules = [ (bitte + /profiles/core.nix) ];
+        modules = [
+          (bitte + /profiles/core.nix)
+          ({ services.consul-snapshots.hourly = recursiveUpdate config.services.consul-snapshots.hourly { backupCount = 48; }; })
+        ];
 
         securityGroupRules = {
           inherit (securityGroupRules) internet internal ssh;
@@ -133,13 +140,17 @@ in {
       };
 
       core-3 = {
-        instanceType = "t3a.medium";
+        instanceType = "t3a.large";
         privateIP = "172.16.2.10";
         subnet = cluster.vpc.subnets.core-3;
         ami = "ami-0a1a94722dcbff94c";
         ebsOptimized = false;
+        volumeSize = 100;
 
-        modules = [ (bitte + /profiles/core.nix) ];
+        modules = [
+          (bitte + /profiles/core.nix)
+          ({ services.consul-snapshots.hourly = recursiveUpdate config.services.consul-snapshots.hourly { backupCount = 48; }; })
+        ];
 
         securityGroupRules = {
           inherit (securityGroupRules) internet internal ssh;
