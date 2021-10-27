@@ -1,4 +1,5 @@
 .direnv
+*.plan
 *.swp
 secrets/
 /.terraform
