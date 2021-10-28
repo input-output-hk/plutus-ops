@@ -41,7 +41,7 @@ in {
 
     staging.description = "Staging";
 
-    wyohack.description = "Marlowe - Wyoming Hackathon 2021";
+    plutus-staging.description = "Plutus Apps Staging";
   };
 
   users.extraUsers.root.openssh.authorizedKeys.keys = pkgs.ssh-keys.devOps ++ [

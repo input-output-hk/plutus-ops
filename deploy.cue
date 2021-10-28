@@ -20,17 +20,23 @@ Namespace: [Name=_]: {
 		namespace:   Name
 		#domain:     string
 		#fqdn:       fqdn
-		#plutusRev:     =~"^\(hex){40}$"
+		#revs: [string]: =~"^\(hex){40}$"
+		#variant:    string
 		#flakes: [string]: types.#flake
 
 		#flakes: {
-			webGhcServer:                =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#web-ghc-server-entrypoint"
-			"plutus-playground-server":  =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#plutus-playground-server-entrypoint"
-			"plutus-playground-client":  =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#plutus-playground-client-entrypoint"
-			"marlowe-playground-server": =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#marlowe-playground-server-entrypoint"
-			"marlowe-playground-client": =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#marlowe-playground-client-entrypoint"
-			marloweRun:                  =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#marlowe-run-entrypoint"
-			marloweWebsite:              =~flakePath | *"github:input-output-hk/plutus?rev=\(#plutusRev)#marlowe-website-entrypoint"
+			if #variant == "plutus" {
+				webGhcServer:                =~flakePath | *"github:input-output-hk/plutus-apps?rev=\(#revs.plutus)#web-ghc-server-entrypoint"
+				"plutus-playground-server":  =~flakePath | *"github:input-output-hk/plutus-apps?rev=\(#revs.plutus)#plutus-playground-server-entrypoint"
+				"plutus-playground-client":  =~flakePath | *"github:input-output-hk/plutus-apps?rev=\(#revs.plutus)#plutus-playground-client-entrypoint"
+			}
+			if #variant == "marlowe" {
+				webGhcServer:                =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#web-ghc-server-entrypoint"
+				"marlowe-playground-server": =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#marlowe-playground-server-entrypoint"
+				"marlowe-playground-client": =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#marlowe-playground-client-entrypoint"
+				marloweRun:                  =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#marlowe-run-entrypoint"
+				marloweWebsite:              =~flakePath | *"github:input-output-hk/marlowe-website?rev=\(#revs.marloweWebsite)#marlowe-website-entrypoint"
+			}
 		}
 
 		#rateLimit: {
@@ -45,52 +51,57 @@ Namespace: [Name=_]: {
 #jobs: {
 	#namespace: string
 	#portBase: uint
+	#variant: string
 
 	"web-ghc-server": jobDef.#WebGhcServerJob & {
 		#domain: "web-ghc-\(#namespace).\(fqdn)"
 		#port: #portBase
 	}
-	"plutus-playground": jobDef.#PlutusPlaygroundJob & {
-		if #namespace == "plutus-apps-prod" {
-			#domain:      "playground.plutus.iohkdev.io"
+	if #variant == "plutus" {
+		"plutus-playground": jobDef.#PlutusPlaygroundJob & {
+			if #namespace == "plutus-apps-prod" {
+				#domain:      "playground.plutus.iohkdev.io"
+			}
+			if #namespace != "plutus-apps-prod" {
+				#domain:      "plutus-playground-\(#namespace).\(fqdn)"
+			}
+			#domainNS:    #namespace
+			#variant:     "plutus"
+			#clientPort:  #portBase + 1
+			#serverPort:  #portBase + 2
 		}
-		if #namespace != "plutus-apps-prod" {
-			#domain:      "plutus-playground-\(#namespace).\(fqdn)"
-		}
-		#domainNS:    #namespace
-		#variant:     "plutus"
-		#clientPort:  #portBase + 1
-		#serverPort:  #portBase + 2
 	}
-	"marlowe-playground": jobDef.#PlutusPlaygroundJob & {
-		if #namespace == "prod" {
-			#domain:      "play.marlowe-finance.io"
+	if #variant == "marlowe" {
+		"marlowe-playground": jobDef.#PlutusPlaygroundJob & {
+			if #namespace == "prod" {
+				#domain:      "play.marlowe-finance.io"
+			}
+			if #namespace != "prod" {
+				#domain:      "marlowe-playground-\(#namespace).\(fqdn)"
+			}
+			#domainNS:    #namespace
+			#variant:     "marlowe"
+			#clientPort:  #portBase + 3
+			#serverPort:  #portBase + 4
 		}
-		if #namespace != "prod" {
-			#domain:      "marlowe-playground-\(#namespace).\(fqdn)"
+		"marlowe-website": jobDef.#MarloweWebsiteJob & {
+			if #namespace == "prod" {
+				#domain:      "marlowe-finance.io"
+			}
+			if #namespace != "prod" {
+				#domain:      "marlowe-website-\(#namespace).\(fqdn)"
+			}
+			#port: #portBase + 5
 		}
-		#domainNS:    #namespace
-		#variant:     "marlowe"
-		#clientPort:  #portBase + 3
-		#serverPort:  #portBase + 4
-	}
-	"marlowe-website": jobDef.#MarloweWebsiteJob & {
-		if #namespace == "prod" {
-			#domain:      "marlowe-finance.io"
+		"marlowe-run": jobDef.#MarloweRunJob & {
+			if #namespace == "prod" {
+				#domain:      "run.marlowe-finance.io"
+			}
+			if #namespace != "prod" {
+				#domain:      "marlowe-run-\(#namespace).\(fqdn)"
+			}
+			#portRangeBase:  #portBase + 6
 		}
-		if #namespace != "prod" {
-			#domain:      "marlowe-website-\(#namespace).\(fqdn)"
-		}
-		#port: #portBase + 5
-	}
-	"marlowe-run": jobDef.#MarloweRunJob & {
-		if #namespace == "prod" {
-			#domain:      "run.marlowe-finance.io"
-		}
-		if #namespace != "prod" {
-			#domain:      "marlowe-run-\(#namespace).\(fqdn)"
-		}
-		#portRangeBase:  #portBase + 6
 	}
 }
 
@@ -99,41 +110,49 @@ Namespace: [Name=_]: {
 #namespaces: {
 	"production": {
 		vars: {
-			#plutusRev: revisions["production"]
+			#revs: revisions["production"]
+			#variant: "marlowe"
 		}
 		jobs: #jobs & {
 			#namespace: "prod"
 			#portBase: 1776
+			#variant: "marlowe"
 		}
 
 	}
 	"staging": {
 		vars: {
-			#plutusRev: revisions["staging"]
+			#revs: revisions["staging"]
+			#variant: "marlowe"
 		}
 		jobs: #jobs & {
 			#namespace: "staging"
 			#portBase: 1787
+			#variant: "marlowe"
 		}
-
 	}
+
 	"plutus-production": {
 		vars: {
-			#plutusRev: revisions["plutus-production"]
+			#revs: revisions["plutusProduction"]
+			#variant: "plutus"
 		}
 		jobs: #jobs & {
 			#namespace: "plutus-apps-prod"
 			#portBase: 1798
+			#variant: "plutus"
 		}
 
 	}
-	"wyohack": {
+	"plutus-staging": {
 		vars: {
-			#plutusRev: revisions["wyohack"]
+			#revs: revisions["plutusStaging"]
+			#variant: "plutus"
 		}
 		jobs: #jobs & {
-			#namespace: "wyohack"
+			#namespace: "plutus-apps-staging"
 			#portBase: 1809
+			#variant: "plutus"
 		}
 
 	}
