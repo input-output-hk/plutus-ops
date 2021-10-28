@@ -110,7 +110,13 @@ jobs:
       - name: Deploy jobs
         run: |
           source $RUNNER_TEMP/nix-dev-env
-          for env in $(cue eval -e "[ for n, v in #namespaces { n }]" --out json | jq -rc '.[]')
+          iogo list-jobs | while read -r jobLine
           do
-            yes yes | iogo plan $env
+            set $jobLine
+            echo "Checking if $1:$2 needs redeploying" >&2
+            if ! iogo plan --namespace=$1 $2 --output plan.hcl | tee command
+            then
+              echo "Redeploying $1:$2" >&2
+              $(grep "nomad job run" command)
+            fi
           done
