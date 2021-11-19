@@ -1,3 +1,71 @@
+# Plutus deployment details
+The Plutus deployment consists of several environments containing various combinations of Plutus components
+## Components
+* web-ghc: An HTTP frontend to the GHC compiler with appropriate modules for compiling code from the playgrounds. Shouldn't be publicly accessible, but currently is
+* plutus-playground: Web app to write, compile, and simulate simple Plutus programs. Uses web-ghc for compilation.
+* marlowe-playground: Web app to write, compile, and simulate Marlowe contracts. Uses web-ghc for compilation.
+* marlowe-run: Web frontend to run and interact with Marlowe contracts. Currently includes a mock node, wallet server, etc. in the backend.
+* marlowe-website: Static homepage for Marlowe
+## Variants
+There are two general variants of the system contained in different envrionments:
+
+* plutus: Includes plutus-playground and web-ghc with Plutus modules
+* marlowe: Includes marlowe-website, marlowe-run, marlowe-playground, and web-ghc with Plutus and Marlowe modules.
+
+## Environments
+There are 4 permanent environments currently deployed:
+
+* production: Marlowe variant. marlowe-website pulled from https://github.com/input-output-hk/marlowe-website/tree/production , other components pulled from https://github.com/input-output-hk/marlowe-cardano/tree/production
+
+  - [Marlowe website](https://marlowe-finance.io)
+  - [Marlowe run](https://run.marlowe-finance.io)
+  - [Marlowe playground](https://play.marlowe-finance.io)
+* staging: Marlowe variant. marlowe-website pulled from https://github.com/input-output-hk/marlowe-website/tree/master , other components pulled from https://github.com/input-output-hk/marlowe-cardano/tree/main
+
+  - [Marlowe website](https://marlowe-website-staging.plutus.aws.iohkdev.io/)
+  - [Marlowe run](https://marlowe-run-staging.plutus.aws.iohkdev.io)
+  - [Marlowe playground](https://marlowe-playground-staging.plutus.aws.iohkdev.io)
+* plutus-production. Plutus variant. Components pulled from the latest tag in the format `vYYYY-MM-DD` from https://github.com/input-output-hk/plutus-apps/
+
+  - [Plutus playground](https://playground.plutus.iohkdev.io/)
+* plutus-staging. Plutus variant. Components pulled from https://github.com/input-output-hk/plutus-apps/tree/main
+
+  - [Plutus playground](https://plutus-playground-plutus-apps-staging.plutus.aws.iohkdev.io/)
+### Ad hoc environments
+The process to create a new environment for ad hoc testing is currently somewhat involved (and, as of this writing, no one has done it). You'll probably need help from @shlevy or @input-output-hk/devops for now.
+
+First, create a PR against this repo:
+
+1. Create a new directory under `revisions`, copied from `staging` if this is a Marlowe environment or `plutusStaging` if it's a Plutus environment, named for your environment
+2. Update the cue file(s) in your new directory with the appropriate revisions of the relevant repositories
+3. Add an entry in `revisions/combined.cue` for your environment
+4. Add a new entry to the `#namespaces` definition in `deploy.cue`, copied either from the `staging` entry or the `plutus-staging` entry, updating the following fields:
+
+   - `#revs`: Use your own environment name
+   - `#namespace`: Use a unique namespace name, which will become part of the URL for your deployment
+
+      Plutus playground: https://plutus-playground-NAMESPACE.plutus.aws.iohkdev.io/
+      Marlowe playground: https://marlowe-playground-NAMESPACE.plutus.aws.iohkdev.io/
+      Marlowe website: https://marlowe-website-NAMESPACE.plutus.aws.iohkdev.io/
+      Marlowe run: https://marlowe-run-NAMESPACE.plutus.aws.iohkdev.io/
+   - `#portBase`: This should be 11 higher than the number in the previous entry
+
+If you're OK with waiting for PRs to update your environment, you can simply update the `revisions` files you've added in a PR. Otherwise, you can update autodeployment in the relevant repo(s) (marlowe-cardano, marlowe-website, plutus-apps):
+
+1. In `.github/workflows/deploy.yml`, add a branch under `on:`→`push:`→`branches:`
+2. In `scripts/deploy-bitte`, search for `ref_env_mapping` and add a mapping from your branch name to the environment name
+
+# Automated deployment
+This section describes how the basic bitte deployment was modified to support automated deployments. This should be improved and included in bitte proper.
+
+* Multiple environments in a single deployment were supported by having multiple namespaces use the `#jobs` entry in `deploy.cue`, allowing port numbers to be shifted (to maximize utilization) and modifying subdomains per-namespace
+* For each environment, created a directory under `revisions` with the git revisions of the relevant upstream flakes
+* Added `.github/workflows/deploy.yml` to redeploy changed jobs (and, in principle, infra and systems) upon each commit to master.
+
+In each upstream repo (e.g. https://github.com/input-output-hk/marlowe-cardano ), set up automation to update the appropriate revisions files at the appropriate times:
+
+* Added `.github/workflows/deploy.yml` to call `deploy-bitte` with the appropriate environment upon push to the right branches
+* Added `scripts/deploy-bitte` script to find the environment corresponding to the pushed branch and push a commit to `plutus-ops` updating the relevant `revisions` file.
 # Bootstrapping a Bitte Cluster
 
 ## Resource Preparation
