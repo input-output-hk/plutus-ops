@@ -54,6 +54,7 @@ in {
 
     adminNames = [ "michael.bishop" ];
     developerGithubNames = [ ];
+    adminGithubTeamNames = [ "devops" "plutus-devops" ];
     developerGithubTeamNames = [ "plutus" ];
     domain = "plutus.aws.iohkdev.io";
     extraAcmeSANs = [
