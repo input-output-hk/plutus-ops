@@ -156,6 +156,19 @@ Namespace: [Name=_]: {
 		}
 
 	}
+
+	"hernan": {
+		vars: {
+			#revs: revisions["hernan"]
+			#variant: "marlowe"
+		}
+		jobs: #jobs & {
+			#namespace: "hernan"
+			#portBase: 1820
+			#variant: "marlowe"
+		}
+	}
+
 }
 
 for nsName, nsValue in #namespaces {

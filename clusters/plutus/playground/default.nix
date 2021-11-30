@@ -42,6 +42,8 @@ in {
     staging.description = "Staging";
 
     plutus-staging.description = "Plutus Apps Staging";
+
+    hernan.description = "Hernán's ad hoc environment";
   };
 
   users.extraUsers.root.openssh.authorizedKeys.keys = pkgs.ssh-keys.devOps ++ [
