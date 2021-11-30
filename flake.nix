@@ -4,14 +4,15 @@
   inputs = {
     utils.url = "github:kreisys/flake-utils";
     bitte.url = "github:input-output-hk/bitte";
+    cli.url = "github:input-output-hk/bitte-cli";
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
-    nixpkgs.follows = "bitte/nixpkgs";
+    nixpkgs.follows = "cli/nixpkgs";
     bitte-ci.url = "github:input-output-hk/bitte-ci";
     bitte-ci-frontend.follows = "bitte-ci/bitte-ci-frontend";
     ops-lib.url = "github:input-output-hk/ops-lib/zfs-image?dir=zfs";
   };
 
-  outputs = { self, nixpkgs, utils, bitte, ... }@inputs:
+  outputs = { self, nixpkgs, utils, bitte, cli, ... }@inputs:
     utils.lib.simpleFlake {
       nixpkgs = nixpkgs // {
         lib = nixpkgs.lib // {
@@ -22,7 +23,7 @@
       };
       systems = [ "x86_64-linux" ];
 
-      preOverlays = [ bitte ];
+      preOverlays = [ bitte cli.overlay ];
       overlay = import ./overlay.nix inputs;
 
       extraOutputs = let

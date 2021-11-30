@@ -19,7 +19,7 @@ in {
     nix = final.nixFlakes;
   };
 
-  devShell = final.bitteShellCompat {
+  devShell = final.bitteShell {
     inherit (inputs) self;
     extraPackages = [ final.cue ];
     cluster = "plutus-playground";
