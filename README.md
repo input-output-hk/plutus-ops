@@ -38,8 +38,9 @@ First, create a PR against this repo:
 
 1. Create a new directory under `revisions`, copied from `staging` if this is a Marlowe environment or `plutusStaging` if it's a Plutus environment, named for your environment
 2. Update the cue file(s) in your new directory with the appropriate revisions of the relevant repositories
-3. Add an entry in `revisions/combined.cue` for your environment
-4. Add a new entry to the `#namespaces` definition in `deploy.cue`, copied either from the `staging` entry or the `plutus-staging` entry, updating the following fields:
+3. Update the cue file(s) in your new directory, changing the package name to your new directory name
+4. Add an entry in `revisions/combined.cue` for your environment
+5. Add a new entry to the `#namespaces` definition in `deploy.cue`, copied either from the `staging` entry or the `plutus-staging` entry, updating the following fields:
 
    - `#revs`: Use your own environment name
    - `#namespace`: Use a unique namespace name, which will become part of the URL for your deployment
@@ -49,6 +50,7 @@ First, create a PR against this repo:
       Marlowe website: https://marlowe-website-NAMESPACE.plutus.aws.iohkdev.io/
       Marlowe run: https://marlowe-run-NAMESPACE.plutus.aws.iohkdev.io/
    - `#portBase`: This should be 11 higher than the number in the previous entry
+6. Add a new entry and description under `services.nomad.namespaces` in `clusters/plutus/playground/default.nix`
 
 If you're OK with waiting for PRs to update your environment, you can simply update the `revisions` files you've added in a PR. Otherwise, you can update autodeployment in the relevant repo(s) (marlowe-cardano, marlowe-website, plutus-apps):
 
