@@ -167,6 +167,18 @@ Namespace: [Name=_]: {
 			#portBase: 1820
 			#variant: "marlowe"
 		}
+
+	"pablo": {
+		vars: {
+			#revs: revisions["pablo"]
+			#variant: "marlowe"
+		}
+		jobs: #jobs & {
+			#namespace: "pablo"
+			#portBase: 1831
+			#variant: "marlowe"
+		}
+
 	}
 
 }
