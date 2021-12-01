@@ -56,5 +56,6 @@
           '';
         };
 
+      devShellEnv.${system} = pkgs.build-dev-env self.devShell.${system};
     } // bitteStack;
 }
