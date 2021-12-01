@@ -57,5 +57,11 @@
         };
 
       devShellEnv.${system} = pkgs.build-dev-env self.devShell.${system};
-    } // bitteStack;
+    } // bitteStack // {
+      hydraJobs = bitteStack.hydraJobs // {
+        ${system} = bitteStack.hydraJobs.${system} // {
+          devShellEnv = self.devShellEnv.${system};
+        };
+      };
+    };
 }
