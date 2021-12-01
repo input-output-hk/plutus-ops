@@ -40,7 +40,6 @@
 
     in
     {
-      inherit overlays;
       legacyPackages.${system} = pkgs;
 
       devShell.${system} = let name = "plutus-playground"; in

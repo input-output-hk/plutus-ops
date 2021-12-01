@@ -96,6 +96,24 @@ in {
           modules = [
             (bitte + /profiles/client.nix)
             ./marlowe-run.nix
+            # TODO: needed until amis can be cycled
+            {
+              boot.loader.grub = { device = lib.mkForce "none"; devices = lib.mkForce [ "/dev/nvme0n1" ]; };
+              fileSystems = lib.mkForce {
+                "/" = {
+                  device = "tank/root";
+                  fsType = "zfs";
+                };
+                "/nix" = {
+                  device = "tank/nix";
+                  fsType = "zfs";
+                };
+                "/var" = {
+                  device = "tank/var";
+                  fsType = "zfs";
+                };
+              };
+            }
             "${self.inputs.nixpkgs}/nixos/modules/profiles/headless.nix"
             "${self.inputs.nixpkgs}/nixos/modules/virtualisation/ec2-data.nix"
           ];
