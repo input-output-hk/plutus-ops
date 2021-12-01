@@ -43,7 +43,7 @@ jobs:
 
           echo "$SECRETS_TAR_GZ" | base64 --decode | tar xz
 
-          iogo login >> $RUNNER_TEMP/nix-dev-env
+          iogo login --debug >> $RUNNER_TEMP/nix-dev-env
 
       # To get faster deploys for now, we assume that any tf or NixOS
       # changes were applied already.
