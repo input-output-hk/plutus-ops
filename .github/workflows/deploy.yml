@@ -27,7 +27,7 @@ jobs:
 
       - name: Prepare dev environment
         run: |
-          nix -L build .#devShellEnv --out-link $RUNNER_TEMP/nix-dev-env.json
+          nix -L build .#devShellEnv.x86_64-linux --out-link $RUNNER_TEMP/nix-dev-env.json
           nix print-dev-env $RUNNER_TEMP/nix-dev-env.json > $RUNNER_TEMP/nix-dev-env
 
       - name: Set up secrets
