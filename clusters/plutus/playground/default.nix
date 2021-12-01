@@ -17,6 +17,13 @@ let
 
 in {
   imports = [ ./iam.nix ./secrets.nix ./vault-raft-storage.nix ];
+  
+  users.users.oauth2_proxy.group = "oauth2_proxy";
+  users.groups.oauth2_proxy = {};
+  users.users.oauth2_proxy.isSystemUser = true;
+  users.users.builder.group = "builder";
+  users.groups.builder = {};
+  users.users.builder.isSystemUser = true;
 
   services.consul.policies.developer.servicePrefix."plutus-" = {
     policy = "write";
@@ -88,7 +95,6 @@ in {
 
           modules = [
             (bitte + /profiles/client.nix)
-            (bitte + /profiles/zfs-runtime.nix)
             ./marlowe-run.nix
             "${self.inputs.nixpkgs}/nixos/modules/profiles/headless.nix"
             "${self.inputs.nixpkgs}/nixos/modules/virtualisation/ec2-data.nix"

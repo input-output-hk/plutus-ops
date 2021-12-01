@@ -3,48 +3,58 @@
 
   inputs = {
     utils.url = "github:kreisys/flake-utils";
-    bitte.url = "github:input-output-hk/bitte";
-    cli.url = "github:input-output-hk/bitte-cli";
+    bitte.url = "github:input-output-hk/bitte/fix-all-the-bootstrapping";
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
-    nixpkgs.follows = "cli/nixpkgs";
+    nixpkgs.follows = "bitte/nixpkgs";
     bitte-ci.url = "github:input-output-hk/bitte-ci";
     bitte-ci-frontend.follows = "bitte-ci/bitte-ci-frontend";
     ops-lib.url = "github:input-output-hk/ops-lib/zfs-image?dir=zfs";
   };
 
-  outputs = { self, nixpkgs, utils, bitte, cli, ... }@inputs:
-    utils.lib.simpleFlake {
-      nixpkgs = nixpkgs // {
-        lib = nixpkgs.lib // {
-          # Needed until https://github.com/NixOS/nixpkgs/pull/135794
-          composeManyExtensions = exts: final: prev:
-            nixpkgs.lib.composeManyExtensions exts final prev;
-        };
-      };
-      systems = [ "x86_64-linux" ];
+  outputs = { self, nixpkgs, utils, bitte, ... }@inputs:
+    let
 
-      preOverlays = [ bitte cli.overlay ];
-      overlay = import ./overlay.nix inputs;
+      system = "x86_64-linux";
 
-      extraOutputs = let
-        hashiStack = bitte.lib.mkHashiStack {
-          flake = self // {
-            inputs = self.inputs // { inherit (bitte.inputs) terranix; };
-          };
-          domain = "plutus.aws.iohkdev.io";
+      overlay = final: prev: (nixpkgs.lib.composeManyExtensions overlays) final prev;
+      overlays = [ (import ./overlay.nix inputs) bitte.overlay ];
+
+      domain = "plutus.aws.iohkdev.io";
+
+      bitteStack =
+        let stack = bitte.lib.mkBitteStack {
+          inherit domain self inputs pkgs;
+          clusters = "${self}/clusters";
+          deploySshKey = "./secrets/ssh-plutus-playground";
+          hydrateModule = { };
         };
-      in {
-        inherit self inputs;
-        inherit (hashiStack)
-          clusters nomadJobs nixosConfigurations consulTemplates;
-        hydraJobs.x86_64-linux = self.packages.x86_64-linux
-          // (builtins.mapAttrs (_: config: config.config.system.build.toplevel)
-            self.nixosConfigurations);
+        in
+        stack // {
+          deploy = stack.deploy // { autoRollback = false; };
+        };
+
+      pkgs = import nixpkgs {
+        inherit overlays system;
+        config.allowUnfree = true;
       };
 
-      # simpleFlake ignores devShell if we don't specify this.
-      packages = { checkCue, devShellEnv }@pkgs: pkgs;
+    in
+    {
+      inherit overlays;
+      legacyPackages.${system} = pkgs;
 
-      devShell = { devShell }: devShell;
-    };
+      devShell.${system} = let name = "plutus-playground"; in
+        pkgs.bitteShell {
+          inherit self domain;
+          profile = name;
+          cluster = name;
+          namespace = "production";
+          extraPackages = [ pkgs.cue ];
+          nixConfig = ''
+            extra-substituters = s3://plutus-ops/infra/binary-cache/?region=eu-central-1
+            extra-trusted-public-keys = plutus-playground-0:7YXf8u1WZSqbwbfj7+8UwwItfiv3BeUk6Rbi4RT0QAs=
+          '';
+        };
+
+    } // bitteStack;
 }
