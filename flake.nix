@@ -1,4 +1,9 @@
 {
+  nixConfig.extra-substituters = "s3://plutus-ops/infra/binary-cache/?region=eu-central-1";
+  nixConfig.extra-trusted-public-keys = "plutus-playground-0:7YXf8u1WZSqbwbfj7+8UwwItfiv3BeUk6Rbi4RT0QAs=";
+  nixConfig.post-build-hook = "./upload-to-cache.sh";
+  nixConfig.allow-import-from-derivation = "true";
+
   description = "Bitte for Plutus";
 
   inputs = {
@@ -49,10 +54,6 @@
           cluster = name;
           namespace = "production";
           extraPackages = [ pkgs.cue ];
-          nixConfig = ''
-            extra-substituters = s3://plutus-ops/infra/binary-cache/?region=eu-central-1
-            extra-trusted-public-keys = plutus-playground-0:7YXf8u1WZSqbwbfj7+8UwwItfiv3BeUk6Rbi4RT0QAs=
-          '';
         };
 
       devShellEnv.${system} = pkgs.build-dev-env self.devShell.${system};
