@@ -1,6 +1,7 @@
 { self, lib, pkgs, config, ... }:
 let domain = config.cluster.domain;
-in {
+in
+{
   services.traefik = {
     enable = true;
 

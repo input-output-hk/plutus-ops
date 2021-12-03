@@ -15,14 +15,15 @@ let
     eu-central-1 = "ami-0839f2c610f876d2d";
   };
 
-in {
+in
+{
   imports = [ ./iam.nix ./secrets.nix ./vault-raft-storage.nix ];
-  
+
   users.users.oauth2_proxy.group = "oauth2_proxy";
-  users.groups.oauth2_proxy = {};
+  users.groups.oauth2_proxy = { };
   users.users.oauth2_proxy.isSystemUser = true;
   users.users.builder.group = "builder";
-  users.groups.builder = {};
+  users.groups.builder = { };
   users.users.builder.isSystemUser = true;
 
   services.consul.policies.developer.servicePrefix."plutus-" = {
@@ -82,51 +83,53 @@ in {
     autoscalingGroups = listToAttrs (forEach [{
       region = "eu-central-1";
       desiredCapacity = 8;
-    }] (args:
-      let
-        attrs = ({
-          desiredCapacity = 1;
-          maxSize = 40;
-          instanceType = "c5.2xlarge";
-          associatePublicIP = true;
-          maxInstanceLifetime = 0;
-          iam.role = cluster.iam.roles.client;
-          iam.instanceProfile.role = cluster.iam.roles.client;
+    }]
+      (args:
+        let
+          attrs = ({
+            desiredCapacity = 1;
+            maxSize = 40;
+            instanceType = "c5.2xlarge";
+            associatePublicIP = true;
+            maxInstanceLifetime = 0;
+            iam.role = cluster.iam.roles.client;
+            iam.instanceProfile.role = cluster.iam.roles.client;
 
-          modules = [
-            (bitte + /profiles/client.nix)
-            ./marlowe-run.nix
-            # TODO: needed until amis can be cycled
-            {
-              boot.loader.grub = { device = lib.mkForce "none"; devices = lib.mkForce [ "/dev/nvme0n1" ]; };
-              fileSystems = lib.mkForce {
-                "/" = {
-                  device = "tank/root";
-                  fsType = "zfs";
+            modules = [
+              (bitte + /profiles/client.nix)
+              ./marlowe-run.nix
+              # TODO: needed until amis can be cycled
+              {
+                boot.loader.grub = { device = lib.mkForce "none"; devices = lib.mkForce [ "/dev/nvme0n1" ]; };
+                fileSystems = lib.mkForce {
+                  "/" = {
+                    device = "tank/root";
+                    fsType = "zfs";
+                  };
+                  "/nix" = {
+                    device = "tank/nix";
+                    fsType = "zfs";
+                  };
+                  "/var" = {
+                    device = "tank/var";
+                    fsType = "zfs";
+                  };
                 };
-                "/nix" = {
-                  device = "tank/nix";
-                  fsType = "zfs";
-                };
-                "/var" = {
-                  device = "tank/var";
-                  fsType = "zfs";
-                };
-              };
-            }
-            "${self.inputs.nixpkgs}/nixos/modules/profiles/headless.nix"
-            "${self.inputs.nixpkgs}/nixos/modules/virtualisation/ec2-data.nix"
-          ];
+              }
+              "${self.inputs.nixpkgs}/nixos/modules/profiles/headless.nix"
+              "${self.inputs.nixpkgs}/nixos/modules/virtualisation/ec2-data.nix"
+            ];
 
-          securityGroupRules = {
-            inherit (securityGroupRules) internet internal ssh;
-          };
-          ami = amis.${args.region};
-        } // args);
-        asgName = "client-${attrs.region}-${
+            securityGroupRules = {
+              inherit (securityGroupRules) internet internal ssh;
+            };
+            ami = amis.${args.region};
+          } // args);
+          asgName = "client-${attrs.region}-${
             replaceStrings [ "." ] [ "-" ] attrs.instanceType
           }";
-      in nameValuePair asgName attrs));
+        in
+        nameValuePair asgName attrs));
 
     instances = {
       core-1 = {

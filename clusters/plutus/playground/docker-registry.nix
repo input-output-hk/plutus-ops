@@ -1,6 +1,7 @@
 { lib, pkgs, config, ... }:
 let kms = config.cluster.kms;
-in {
+in
+{
   services = {
     dockerRegistry = {
       enable = true;

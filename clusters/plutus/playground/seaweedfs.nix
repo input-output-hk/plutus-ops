@@ -1,6 +1,7 @@
 { config, lib, ... }:
 let cores = [ "core-1" "core-2" "core-3" ];
-in {
+in
+{
   services.seaweedfs.filer = {
     enable = true;
 
