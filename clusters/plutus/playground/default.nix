@@ -10,11 +10,6 @@ let
 
   bitte = self.inputs.bitte;
 
-  amis = {
-    us-east-2 = "ami-0492aa69cf46f79c3";
-    eu-central-1 = "ami-0839f2c610f876d2d";
-  };
-
 in
 {
   imports = [ ./iam.nix ./secrets.nix ./vault-raft-storage.nix ];
@@ -98,24 +93,6 @@ in
             modules = [
               (bitte + /profiles/client.nix)
               ./marlowe-run.nix
-              # TODO: needed until amis can be cycled
-              {
-                boot.loader.grub = { device = lib.mkForce "none"; devices = lib.mkForce [ "/dev/nvme0n1" ]; };
-                fileSystems = lib.mkForce {
-                  "/" = {
-                    device = "tank/root";
-                    fsType = "zfs";
-                  };
-                  "/nix" = {
-                    device = "tank/nix";
-                    fsType = "zfs";
-                  };
-                  "/var" = {
-                    device = "tank/var";
-                    fsType = "zfs";
-                  };
-                };
-              }
               "${self.inputs.nixpkgs}/nixos/modules/profiles/headless.nix"
               "${self.inputs.nixpkgs}/nixos/modules/virtualisation/ec2-data.nix"
             ];
@@ -123,7 +100,6 @@ in
             securityGroupRules = {
               inherit (securityGroupRules) internet internal ssh;
             };
-            ami = amis.${args.region};
           } // args);
           asgName = "client-${attrs.region}-${
             replaceStrings [ "." ] [ "-" ] attrs.instanceType
@@ -136,7 +112,6 @@ in
         instanceType = "t3a.xlarge";
         privateIP = "172.16.0.10";
         subnet = cluster.vpc.subnets.core-1;
-        ami = "ami-0a1a94722dcbff94c";
         ebsOptimized = true;
         volumeSize = 100;
 
@@ -161,7 +136,6 @@ in
         instanceType = "t3a.xlarge";
         privateIP = "172.16.1.10";
         subnet = cluster.vpc.subnets.core-2;
-        ami = "ami-0a1a94722dcbff94c";
         ebsOptimized = true;
         volumeSize = 100;
 
@@ -184,7 +158,6 @@ in
         instanceType = "t3a.xlarge";
         privateIP = "172.16.2.10";
         subnet = cluster.vpc.subnets.core-3;
-        ami = "ami-0a1a94722dcbff94c";
         ebsOptimized = false;
         volumeSize = 100;
 
@@ -207,7 +180,6 @@ in
         instanceType = "t3a.xlarge";
         privateIP = "172.16.0.20";
         subnet = cluster.vpc.subnets.core-1;
-        ami = "ami-0a1a94722dcbff94c";
         volumeSize = 500;
         ebsOptimized = true;
         route53.domains = [
@@ -230,7 +202,6 @@ in
         instanceType = "t3a.small";
         privateIP = "172.16.1.40";
         subnet = cluster.vpc.subnets.core-2;
-        ami = "ami-0a1a94722dcbff94c";
         volumeSize = 100;
         route53.domains = [ "*.${cluster.domain}" ];
 
