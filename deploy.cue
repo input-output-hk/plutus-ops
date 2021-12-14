@@ -167,6 +167,7 @@ Namespace: [Name=_]: {
 			#portBase: 1820
 			#variant: "marlowe"
 		}
+	}
 
 	"pablo": {
 		vars: {
