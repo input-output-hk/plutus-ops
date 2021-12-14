@@ -24,8 +24,8 @@ jobs:
           install_url: https://github.com/numtide/nix-unstable-installer/releases/download/nix-2.4pre20210823_af94b54/install
           extra_nix_config: |
             experimental-features = nix-command flakes ca-references
-            substituters = https://hydra.iohk.io https://iohk.cachix.org https://cache.nixos.org/ https://hydra.mantis.ist
-            trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= hydra.mantis.ist-1:4LTe7Q+5pm8+HawKxvmn2Hx0E3NbkYjtf1oWv+eAmTo=
+            substituters = https://hydra.iohk.io https://iohk.cachix.org https://cache.nixos.org/
+            trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
 
       - name: Prepare dev environment
         run: |
