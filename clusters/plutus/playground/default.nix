@@ -49,6 +49,8 @@ in
     hernan.description = "Hernán's ad hoc environment";
 
     pablo.description = "Pablo's test environment";
+
+    shlevy.description = "Shea's test environment";
   };
 
   users.extraUsers.root.openssh.authorizedKeys.keys = pkgs.ssh-keys.devOps ++ [

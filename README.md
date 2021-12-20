@@ -43,7 +43,7 @@ There are 4 permanent environments currently deployed:
 
 ### Ad hoc environments
 
-The process to create a new environment for ad hoc testing is currently somewhat involved (and, as of this writing, no one has done it). You'll probably need help from @shlevy or @input-output-hk/devops for now.
+The process to create a new environment for ad hoc testing is currently somewhat involved. You'll probably need help from @shlevy or @input-output-hk/devops for now.
 
 First, create a PR against this repo:
 

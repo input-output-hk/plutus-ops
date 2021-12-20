@@ -182,6 +182,18 @@ Namespace: [Name=_]: {
 
 	}
 
+	"shlevy": {
+		vars: {
+			#revs: revisions["shlevy"]
+			#variant: "marlowe"
+		}
+		jobs: #jobs & {
+			#namespace: "shlevy"
+			#portBase: 1842
+			#variant: "marlowe"
+		}
+	}
+
 }
 
 for nsName, nsValue in #namespaces {

@@ -7,6 +7,7 @@ import (
 	"github.com/input-output-hk/plutus-ops/pkg/revisions/plutusProduction:plutusProduction"
 	"github.com/input-output-hk/plutus-ops/pkg/revisions/plutusStaging:plutusStaging"
 	"github.com/input-output-hk/plutus-ops/pkg/revisions/pablo:pablo"
+	"github.com/input-output-hk/plutus-ops/pkg/revisions/shlevy:shlevy"
 )
 
 "production": production
@@ -15,3 +16,4 @@ import (
 "plutusProduction": plutusProduction
 "plutusStaging": plutusStaging
 "pablo": pablo
+"shlevy": shlevy
