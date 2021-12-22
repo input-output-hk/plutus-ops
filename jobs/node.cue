@@ -14,6 +14,7 @@ import (
     network: {
       mode: "host"
       port: "node": {}
+      port: "wbe": {}
     }
     count: 1
 
@@ -21,6 +22,11 @@ import (
       type: "host"
       source: "node"
       read_only: false
+    }
+
+    task: "wbe": tasks.#SimpleTask & {
+      #memory: 2048
+      #flake: #flakes.wbe
     }
 
     task: "node": tasks.#NodeTask & {

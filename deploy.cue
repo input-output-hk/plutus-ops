@@ -39,6 +39,7 @@ Namespace: [Name=_]: {
 				marloweWebsite:              =~flakePath | *"github:input-output-hk/marlowe-website?rev=\(#revs.marloweWebsite)#marlowe-website-entrypoint"
 				if #testnet {
 					node:                =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#node"
+					wbe:                 =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#wbe"
 				}
 			}
 		}
