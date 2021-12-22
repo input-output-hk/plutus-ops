@@ -96,7 +96,7 @@ in
 
             modules = [
               (bitte + /profiles/client.nix)
-              ./marlowe-run.nix
+              ./host-volumes.nix
               "${self.inputs.nixpkgs}/nixos/modules/profiles/headless.nix"
               "${self.inputs.nixpkgs}/nixos/modules/virtualisation/ec2-data.nix"
             ];

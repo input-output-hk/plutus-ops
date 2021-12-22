@@ -22,6 +22,7 @@ Namespace: [Name=_]: {
 		#fqdn:       fqdn
 		#revs: [string]: =~"^\(hex){40}$"
 		#variant:    string
+		#testnet: bool | *false
 		#flakes: [string]: types.#flake
 
 		#flakes: {
@@ -36,6 +37,9 @@ Namespace: [Name=_]: {
 				"marlowe-playground-client": =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#marlowe-playground-client-entrypoint"
 				marloweRun:                  =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#marlowe-run-entrypoint"
 				marloweWebsite:              =~flakePath | *"github:input-output-hk/marlowe-website?rev=\(#revs.marloweWebsite)#marlowe-website-entrypoint"
+				if #testnet {
+					node:                =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#node"
+				}
 			}
 		}
 
@@ -52,6 +56,7 @@ Namespace: [Name=_]: {
 	#namespace: string
 	#portBase: uint
 	#variant: string
+	#testnet: bool | *false
 
 	"web-ghc-server": jobDef.#WebGhcServerJob & {
 		#domain: "web-ghc-\(#namespace).\(fqdn)"
@@ -100,7 +105,11 @@ Namespace: [Name=_]: {
 			if #namespace != "prod" {
 				#domain:      "marlowe-run-\(#namespace).\(fqdn)"
 			}
+			#testnet: #testnet
 			#portRangeBase:  #portBase + 6
+		}
+		if #testnet {
+			"node": jobDef.#NodeJob
 		}
 	}
 }
@@ -186,14 +195,15 @@ Namespace: [Name=_]: {
 		vars: {
 			#revs: revisions["shlevy"]
 			#variant: "marlowe"
+			#testnet: true
 		}
 		jobs: #jobs & {
 			#namespace: "shlevy"
 			#portBase: 1842
 			#variant: "marlowe"
+			#testnet: true
 		}
 	}
-
 }
 
 for nsName, nsValue in #namespaces {

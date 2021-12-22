@@ -17,6 +17,7 @@ import (
         }
         #portRangeBase: uint
         #hosts: "`\(#domain)`"
+        #testnet: bool
 
         namespace: string
 
@@ -26,10 +27,12 @@ import (
                 network: {
                         mode: "host"
                         port: "marlowe-run": { static: #portRangeBase }
-                        port: "pab-node": { static: #portRangeBase + 1 }
-                        port: "pab-chain-index": { static: #portRangeBase + 2 }
-                        port: "pab-signing-process": { static: #portRangeBase + 3 }
-                        port: "pab-wallet": { static: #portRangeBase + 4 }
+                        if ! #testnet {
+                                port: "pab-node": { static: #portRangeBase + 1 }
+                                port: "pab-chain-index": { static: #portRangeBase + 2 }
+                                port: "pab-signing-process": { static: #portRangeBase + 3 }
+                                port: "pab-wallet": { static: #portRangeBase + 4 }
+                        }
                 }
                 count: 1
 
@@ -69,7 +72,12 @@ import (
                         #flake:     #flakes.marloweRun
                         #namespace: namespace
                         #fqdn: #fqdn
-                        #memory: 8129
+                        if #testnet {
+                            #memory: 2048
+                        }
+                        if ! #testnet {
+                            #memory: 8129
+                        }
                         #domain: #domain
                         #volumeMount: "pab": types.#stanza.volume_mount & {
                           volume: "pab"
