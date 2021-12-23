@@ -69,6 +69,6 @@ jobs:
             if ! iogo plan --namespace=$1 $2 --output plan.hcl > command
             then
               echo "Redeploying $1:$2" >&2
-              $(grep "nomad job run" command) -detach
+              $(grep "nomad job run" command | sed 's|run|run -detach|')
             fi
           done
