@@ -110,9 +110,6 @@ Namespace: [Name=_]: {
 			#testnet: #testnet
 			#portRangeBase:  #portBase + 6
 		}
-		if #testnet {
-			"node": jobDef.#NodeJob
-		}
 	}
 }
 

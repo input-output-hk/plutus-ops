@@ -26,19 +26,30 @@ import (
         group: server: {
                 network: {
                         mode: "host"
-                        port: "marlowe-run": { static: #portRangeBase }
                         if ! #testnet {
+                                port: "marlowe-run": { static: #portRangeBase }
                                 port: "pab-node": { static: #portRangeBase + 1 }
                                 port: "pab-chain-index": { static: #portRangeBase + 2 }
                                 port: "pab-signing-process": { static: #portRangeBase + 3 }
                                 port: "pab-wallet": { static: #portRangeBase + 4 }
+                        }
+                        if #testnet {
+                                port: "pab": {}
+                                port: "node": {}
+                                port: "wbe": {}
+                                port: "index": {}
                         }
                 }
                 count: 1
 
                 service: "\(namespace)-marlowe-run": {
                         address_mode: "host"
-                        port:         "marlowe-run"
+                        if #testnet {
+                          port:     "pab"
+                        }
+                        if ! #testnet {
+                          port:     "marlowe-run"
+                        }
 
                         tags: [
                                 namespace,
@@ -55,7 +66,12 @@ import (
 
                         check: "health": {
                                 type:     "http"
-                                port:     "marlowe-run"
+                                if #testnet {
+                                  port:     "pab"
+                                }
+                                if ! #testnet {
+                                  port:     "marlowe-run"
+                                }
                                 interval: "10s"
                                 path:     "/api/healthcheck"
                                 timeout:  "2s"
@@ -66,6 +82,38 @@ import (
                   type:       "host"
                   source:     "pab"
                   read_only:  false
+                }
+
+		if #testnet {
+                  volume: "node": types.#stanza.volume & {
+                    type: "host"
+                    source: "node"
+                    read_only: false
+                  }
+
+                  volume: "index": types.#stanza.volume & {
+                    type: "host"
+                    source: "index"
+                    read_only: false
+                  }
+
+                  task: "wbe": tasks.#SimpleTask & {
+                    #memory: 2048
+                    #cpu: 2000
+                    #flake: #flakes.wbe
+                  }
+
+                  task: "node": tasks.#NodeTask & {
+                    #stateVolume: "node"
+                    #cpu: 2000
+                    #flake: #flakes.node
+                  }
+
+                  task: "chain-index": tasks.#ChainIndexTask & {
+                    #stateVolume: "index"
+                    #cpu: 2000
+                    #flake: #flakes.chainIndex
+                  }
                 }
 
                 task: "marlowe-run": tasks.#SimpleTask & {
@@ -84,7 +132,12 @@ import (
                           destination: "/var/lib/pab"
                         }
                         #extraEnv: {
-                                PORT_RANGE_BASE: "\(#portRangeBase)"
+			  if #testnet {
+			    PAB_STATE_DIR: "/var/lib/pab"
+			  }
+			  if ! #testnet {
+                            PORT_RANGE_BASE: "\(#portRangeBase)"
+		          }
                         }
                 }
         }
