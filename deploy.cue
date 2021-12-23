@@ -40,6 +40,7 @@ Namespace: [Name=_]: {
 				if #testnet {
 					node:                =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#node"
 					wbe:                 =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#wbe"
+					chainIndex:          =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#chain-index"
 				}
 			}
 		}

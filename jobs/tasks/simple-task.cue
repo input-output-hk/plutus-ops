@@ -12,6 +12,7 @@ import (
 	#extraEnv: [string]: string
 	#envTemplate: *null | string
 	#volumeMount: [string]: types.#stanza.volume_mount
+	#cpu: *null | uint
 
 	driver: "exec"
 
@@ -23,7 +24,12 @@ import (
 	}
 
 	resources: {
-		cpu:    4000
+		if #cpu != null {
+			cpu:    #cpu
+		}
+		if #cpu == null {
+			cpu: 4000
+		}
 		memory: #memory
 	}
 

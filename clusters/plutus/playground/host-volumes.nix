@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  volumes = [ "pab" "node" ];
+  volumes = [ "pab" "node" "index" ];
 in
 {
   services.nomad.client.host_volume = map

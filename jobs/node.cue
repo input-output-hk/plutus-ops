@@ -15,6 +15,7 @@ import (
       mode: "host"
       port: "node": {}
       port: "wbe": {}
+      port: "index": {}
     }
     count: 1
 
@@ -24,14 +25,28 @@ import (
       read_only: false
     }
 
+    volume: "index": types.#stanza.volume & {
+      type: "host"
+      source: "index"
+      read_only: false
+    }
+
     task: "wbe": tasks.#SimpleTask & {
       #memory: 2048
+      #cpu: 2000
       #flake: #flakes.wbe
     }
 
     task: "node": tasks.#NodeTask & {
       #stateVolume: "node"
+      #cpu: 2000
       #flake: #flakes.node
+    }
+
+    task: "chain-index": tasks.#ChainIndexTask & {
+      #stateVolume: "index"
+      #cpu: 2000
+      #flake: #flakes.chainIndex
     }
   }
 }
