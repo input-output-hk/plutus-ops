@@ -38,6 +38,7 @@ import (
                                 port: "node": {}
                                 port: "wbe": {}
                                 port: "index": {}
+                                port: "run": {}
                         }
                 }
                 count: 1
@@ -62,6 +63,8 @@ import (
                                 "traefik.http.middlewares.\(namespace)-marlowe-run-ratelimit.ratelimit.average=\(#rateLimit.average)",
                                 "traefik.http.middlewares.\(namespace)-marlowe-run-ratelimit.ratelimit.burst=\(#rateLimit.burst)",
                                 "traefik.http.middlewares.\(namespace)-marlowe-run-ratelimit.ratelimit.period=\(#rateLimit.period)",
+                                "traefik.http.routers.\(namespace)-marlowe-run.middlewares=\(namespace)-marlowe-run-stripprefix@consulcatalog",
+                                "traefik.http.middlewares.\(namespace)-marlowe-run-stripprefix.stripprefix.prefixes=/pab"
                         ]
 
                         check: "health": {
@@ -77,6 +80,26 @@ import (
                                 timeout:  "2s"
                         }
                 }
+
+                if #testnet {
+		  service: "\(namespace)-marlowe-run-server": {
+			address_mode: "host"
+			port:  "run"
+
+			tags: [
+				namespace,
+				"ingress",
+				"traefik.enable=true",
+				"traefik.http.routers.\(namespace)-marlowe-run-server.rule=Host(\(#hosts)) && PathPrefix(`/api`)",
+				"traefik.http.routers.\(namespace)-marlowe-run-server.entrypoints=https",
+				"traefik.http.routers.\(namespace)-marlowe-run-server.tls=true",
+				"traefik.http.routers.\(namespace)-marlowe-run-server.middlewares=\(namespace)-marlowe-run-server-ratelimit@consulcatalog",
+				"traefik.http.middlewares.\(namespace)-marlowe-run-server-ratelimit.ratelimit.average=\(#rateLimit.average)",
+				"traefik.http.middlewares.\(namespace)-marlowe-run-server-ratelimit.ratelimit.burst=\(#rateLimit.burst)",
+				"traefik.http.middlewares.\(namespace)-marlowe-run-server-ratelimit.ratelimit.period=\(#rateLimit.period)",
+			  ]
+		  }
+		}
 
                 volume: "pab": types.#stanza.volume & {
                   type:       "host"
@@ -114,6 +137,13 @@ import (
                     #cpu: 2000
                     #flake: #flakes.chainIndex
                   }
+
+                  task: "server": tasks.#SimpleTask & {
+                    #memory: 2048
+                    #cpu: 2000
+                    #flake: #flakes.marloweRunServer
+                  }
+
                 }
 
                 task: "marlowe-run": tasks.#SimpleTask & {

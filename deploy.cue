@@ -41,6 +41,7 @@ Namespace: [Name=_]: {
 					node:                =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#node"
 					wbe:                 =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#wbe"
 					chainIndex:          =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#chain-index"
+					marloweRunServer:    =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#marlowe-run-server-entrypoint"
 				}
 			}
 		}
