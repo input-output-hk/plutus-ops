@@ -1,3 +1,3 @@
 package shlevy
 
-marlowe: "b522088d00dc65cb070c4ceca448526c63930c8f"
+marlowe: "8fff8c32321b97d1776acfefebc044f3fe2fbdf9"
