@@ -57,13 +57,15 @@ Namespace: [Name=_]: {
 
 #jobs: {
 	#namespace: string
-	#portBase: uint
+	#portBase: *null | uint
 	#variant: string
 	#testnet: bool | *false
 
 	"web-ghc-server": jobDef.#WebGhcServerJob & {
 		#domain: "web-ghc-\(#namespace).\(fqdn)"
-		#port: #portBase
+		if #portBase != null {
+			#port: #portBase
+		}
 	}
 	if #variant == "plutus" {
 		"plutus-playground": jobDef.#PlutusPlaygroundJob & {
@@ -75,8 +77,10 @@ Namespace: [Name=_]: {
 			}
 			#domainNS:    #namespace
 			#variant:     "plutus"
-			#clientPort:  #portBase + 1
-			#serverPort:  #portBase + 2
+			if #portBase != null {
+				#clientPort:  #portBase + 1
+				#serverPort:  #portBase + 2
+			}
 		}
 	}
 	if #variant == "marlowe" {
@@ -89,8 +93,10 @@ Namespace: [Name=_]: {
 			}
 			#domainNS:    #namespace
 			#variant:     "marlowe"
-			#clientPort:  #portBase + 3
-			#serverPort:  #portBase + 4
+			if #portBase != null {
+				#clientPort:  #portBase + 3
+				#serverPort:  #portBase + 4
+			}
 		}
 		"marlowe-website": jobDef.#MarloweWebsiteJob & {
 			if #namespace == "prod" {
@@ -99,7 +105,9 @@ Namespace: [Name=_]: {
 			if #namespace != "prod" {
 				#domain:      "marlowe-website-\(#namespace).\(fqdn)"
 			}
-			#port: #portBase + 5
+			if #portBase != null {
+				#port: #portBase + 5
+			}
 		}
 		"marlowe-run": jobDef.#MarloweRunJob & {
 			if #namespace == "prod" {
@@ -109,7 +117,9 @@ Namespace: [Name=_]: {
 				#domain:      "marlowe-run-\(#namespace).\(fqdn)"
 			}
 			#testnet: #testnet
-			#portRangeBase:  #portBase + 6
+			if #portBase != null {
+				#portRangeBase:  #portBase + 6
+			}
 		}
 	}
 }
@@ -160,7 +170,6 @@ Namespace: [Name=_]: {
 		}
 		jobs: #jobs & {
 			#namespace: "plutus-apps-staging"
-			#portBase: 1809
 			#variant: "plutus"
 		}
 
@@ -199,7 +208,6 @@ Namespace: [Name=_]: {
 		}
 		jobs: #jobs & {
 			#namespace: "shlevy"
-			#portBase: 1842
 			#variant: "marlowe"
 			#testnet: true
 		}

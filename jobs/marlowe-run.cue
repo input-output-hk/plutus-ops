@@ -15,7 +15,7 @@ import (
                 burst:   uint
                 period:  types.#duration
         }
-        #portRangeBase: uint
+        #portRangeBase: *null | uint
         #hosts: "`\(#domain)`"
         #testnet: bool
 

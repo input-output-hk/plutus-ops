@@ -61,8 +61,6 @@ First, create a PR against this repo:
      Marlowe website: https://marlowe-website-NAMESPACE.plutus.aws.iohkdev.io/
      Marlowe run: https://marlowe-run-NAMESPACE.plutus.aws.iohkdev.io/
 
-   - `#portBase`: This should be 11 higher than the number in the previous entry
-
 6. Add a new entry and description under `services.nomad.namespaces` in `clusters/plutus/playground/default.nix`
 
 If you're OK with waiting for PRs to update your environment, you can simply update the `revisions` files you've added in a PR. Otherwise, you can update autodeployment in the relevant repo(s) (marlowe-cardano, marlowe-website, plutus-apps):

@@ -12,8 +12,8 @@ import (
 	#flakes: [string]: types.#flake
 	#hosts:          string
 	#variant:        string
-	#clientPort:     uint
-	#serverPort:     uint
+	#clientPort:     *null | uint
+	#serverPort:     *null | uint
 	#rateLimit: {
 		average: uint
 		burst:   uint
@@ -29,8 +29,16 @@ import (
 		network: {
 			mode: "host"
 			port: {
-				"\(#variant)-playground-client": { static: #clientPort }
-				"\(#variant)-playground-server": { static: #serverPort }
+				"\(#variant)-playground-client": {
+					if #clientPort != null {
+						static: #clientPort
+					}
+				}
+				"\(#variant)-playground-server": {
+					if #serverPort != null {
+						static: #serverPort
+					}
+				}
 			}
 		}
 		// Keep count at 1 for now with higher CPU / RAM resources
@@ -80,8 +88,10 @@ import (
 			#memory: 32
 			#variant: ref.variant
 			#domain: ref.domain
-			#extraEnv: {
-				PORT: "\(#clientPort)"
+			if #clientPort != null {
+				#extraEnv: {
+					PORT: "\(#clientPort)"
+				}
 			}
 		}
 
@@ -95,7 +105,9 @@ import (
 				WEBGHC_URL: "web-ghc-\(#domainNS).\(#fqdn)"
 				FRONTEND_URL: "https://\(#domain)"
 				GITHUB_CALLBACK_PATH: "/#/gh-oauth-cb"
-				PORT: "\(#serverPort)"
+				if #serverPort != null {
+					PORT: "\(#serverPort)"
+				}
 			}
       #envTemplate: """
         {{with secret "kv/nomad-cluster/\(#namespace)/\(#variant)/github"}}

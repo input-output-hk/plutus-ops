@@ -16,7 +16,7 @@ import (
 		period:  types.#duration
 	}
         #hosts: "`\(#domain)`,`webghc.\(#fqdn)`"
-        #port: uint
+        #port: *null | uint
 
 	namespace: string
 
@@ -25,7 +25,11 @@ import (
 	group: server: {
 		network: {
 			mode: "host"
-			port: "web-ghc-server": { static: #port }
+			port: "web-ghc-server": {
+				if #port != null {
+					static: #port
+				}
+			}
 		}
 		// Keep count at 1 for now with higher CPU / RAM resources
 		count: 1
@@ -62,8 +66,10 @@ import (
 			#fqdn: #fqdn
 			#memory: 4000
 			#domain: "test"
-			#extraEnv: {
-				PORT: "\(#port)"
+			if #port != null {
+				#extraEnv: {
+					PORT: "\(#port)"
+				}
 			}
 		}
 	}
