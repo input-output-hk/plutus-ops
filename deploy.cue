@@ -200,7 +200,7 @@ Namespace: [Name=_]: {
 		}
 
 	}
-
+/*
 	"shlevy": {
 		vars: {
 			#revs: revisions["shlevy"]
@@ -213,6 +213,7 @@ Namespace: [Name=_]: {
 			#testnet: true
 		}
 	}
+*/
 }
 
 for nsName, nsValue in #namespaces {
