@@ -179,11 +179,12 @@ Namespace: [Name=_]: {
 		vars: {
 			#revs: revisions["hernan"]
 			#variant: "marlowe"
+			#testnet: true
 		}
 		jobs: #jobs & {
 			#namespace: "hernan"
-			#portBase: 1820
 			#variant: "marlowe"
+			#testnet: true
 		}
 	}
 
