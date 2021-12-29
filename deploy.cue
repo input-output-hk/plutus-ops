@@ -143,11 +143,12 @@ Namespace: [Name=_]: {
 		vars: {
 			#revs: revisions["staging"]
 			#variant: "marlowe"
+			#testnet: true
 		}
 		jobs: #jobs & {
 			#namespace: "staging"
-			#portBase: 1787
 			#variant: "marlowe"
+			#testnet: true
 		}
 	}
 
@@ -200,20 +201,6 @@ Namespace: [Name=_]: {
 		}
 
 	}
-/*
-	"shlevy": {
-		vars: {
-			#revs: revisions["shlevy"]
-			#variant: "marlowe"
-			#testnet: true
-		}
-		jobs: #jobs & {
-			#namespace: "shlevy"
-			#variant: "marlowe"
-			#testnet: true
-		}
-	}
-*/
 }
 
 for nsName, nsValue in #namespaces {
