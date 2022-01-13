@@ -1,3 +1,3 @@
 package plutusProduction
 
-plutus: "d1b65bef0596aa4c9507cd8a4d1a2648c9d7c9c0"
+plutus: "6aff97d596ac9d59460aab5c65627b1c8c0a1528"
