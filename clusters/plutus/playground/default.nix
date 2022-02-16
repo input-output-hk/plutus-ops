@@ -21,22 +21,6 @@ in
   users.groups.builder = { };
   users.users.builder.isSystemUser = true;
 
-  services.consul.policies.developer.servicePrefix."plutus-" = {
-    policy = "write";
-    intentions = "write";
-  };
-
-  services.nomad.policies = {
-    admin.namespace."plutus-*".policy = "write";
-    developer = {
-      namespace."plutus-*".policy = "write";
-      agent.policy = "read";
-      quota.policy = "read";
-      node.policy = "read";
-      hostVolume."*".policy = "read";
-    };
-  };
-
   services.nomad.namespaces = {
     production.description = "Marlowe Production";
 
@@ -90,6 +74,7 @@ in
           attrs = ({
             desiredCapacity = 1;
             maxSize = 40;
+            node_class = "client";
             instanceType = "c5.2xlarge";
             associatePublicIP = true;
             maxInstanceLifetime = 0;
@@ -120,6 +105,7 @@ in
         subnet = cluster.vpc.subnets.core-1;
         ebsOptimized = true;
         volumeSize = 100;
+        ami = "ami-047e751e259941f2f";
 
         modules = [
           (bitte + /profiles/core.nix)
@@ -144,6 +130,7 @@ in
         subnet = cluster.vpc.subnets.core-2;
         ebsOptimized = true;
         volumeSize = 100;
+        ami = "ami-047e751e259941f2f";
 
         modules = [
           (bitte + /profiles/core.nix)
@@ -166,6 +153,7 @@ in
         subnet = cluster.vpc.subnets.core-3;
         ebsOptimized = false;
         volumeSize = 100;
+        ami = "ami-047e751e259941f2f";
 
         modules = [
           (bitte + /profiles/core.nix)
@@ -187,6 +175,7 @@ in
         privateIP = "172.16.0.20";
         subnet = cluster.vpc.subnets.core-1;
         volumeSize = 500;
+        ami = "ami-047e751e259941f2f";
         ebsOptimized = true;
         route53.domains = [
           "consul.${cluster.domain}"
@@ -209,6 +198,7 @@ in
         privateIP = "172.16.1.40";
         subnet = cluster.vpc.subnets.core-2;
         volumeSize = 100;
+        ami = "ami-047e751e259941f2f";
         route53.domains = [ "*.${cluster.domain}" ];
 
         modules = [ (bitte + /profiles/routing.nix) ./traefik.nix ];

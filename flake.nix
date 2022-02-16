@@ -8,12 +8,8 @@
 
   inputs = {
     utils.url = "github:kreisys/flake-utils";
-    bitte.url = "github:input-output-hk/bitte/fix-all-the-bootstrapping";
-    nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
+    bitte.url = "github:input-output-hk/bitte/21.12.10";
     nixpkgs.follows = "bitte/nixpkgs";
-    bitte-ci.url = "github:input-output-hk/bitte-ci";
-    bitte-ci-frontend.follows = "bitte-ci/bitte-ci-frontend";
-    ops-lib.url = "github:input-output-hk/ops-lib/zfs-image?dir=zfs";
   };
 
   outputs = { self, nixpkgs, utils, bitte, ... }@inputs:
@@ -31,7 +27,8 @@
           inherit domain self inputs pkgs;
           clusters = "${self}/clusters";
           deploySshKey = "./secrets/ssh-plutus-playground";
-          hydrateModule = { };
+          hydrateModule =
+            import ./hydrate.nix { inherit (bitte.lib) terralib; };
         };
         in
         stack // {
