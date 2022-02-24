@@ -20,6 +20,7 @@ in
   tf.hydrate.configuration = {
     locals.policies = {
       vault.developer.path."kv/*".capabilities = [ c r u d l ];
+      vault.admin = { };
       consul.developer = {
         service_prefix."plutus-*" = {
           policy = "write";
