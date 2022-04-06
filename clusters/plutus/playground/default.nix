@@ -37,6 +37,8 @@ in
     pablo.description = "Pablo's test environment";
 
     shlevy.description = "Shea's test environment";
+
+    marlowe-pioneers.description = "Marlowe Pioneers Program";
   };
 
   users.extraUsers.root.openssh.authorizedKeys.keys = pkgs.ssh-keys.devOps ++ [
