@@ -130,12 +130,14 @@ import (
                     #stateVolume: "node"
                     #cpu: 2000
                     #flake: #flakes.node
+                    #namespace: namespace
                   }
 
                   task: "chain-index": tasks.#ChainIndexTask & {
                     #stateVolume: "index"
                     #cpu: 2000
                     #flake: #flakes.chainIndex
+                    #namespace: namespace
                   }
 
                   task: "server": tasks.#SimpleTask & {
@@ -162,9 +164,7 @@ import (
                           destination: "/var/lib/pab"
                         }
                         #extraEnv: {
-			  if #testnet {
-			    PAB_STATE_DIR: "/var/lib/pab"
-			  }
+			  PAB_STATE_DIR: "/var/lib/pab/\(#namespace)"
 			  if ! #testnet {
                             PORT_RANGE_BASE: "\(#portRangeBase)"
 		          }

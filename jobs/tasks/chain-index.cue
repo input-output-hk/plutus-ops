@@ -9,6 +9,8 @@ import (
 
   #memory: 2048
 
+  #namespace: string
+
   let stateDir = "/var/lib/plutus-chain-index"
 
   #volumeMount: "index": types.#stanza.volume_mount & {
@@ -17,7 +19,7 @@ import (
   }
 
   #extraEnv: {
-    INDEX_STATE_DIR: stateDir
+    INDEX_STATE_DIR: "\(stateDir)/\(#namespace)"
   }
 
 }

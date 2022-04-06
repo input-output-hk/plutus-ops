@@ -9,6 +9,8 @@ import (
 
   #memory: 4096
 
+  #namespace: string
+
   let stateDir = "/var/lib/cardano-node"
 
   #volumeMount: "node": types.#stanza.volume_mount & {
@@ -17,7 +19,7 @@ import (
   }
 
   #extraEnv: {
-    NODE_STATE_DIR: stateDir
+    NODE_STATE_DIR: "\(stateDir)/\(#namespace)"
   }
 
 }
