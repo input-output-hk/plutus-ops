@@ -88,6 +88,12 @@ in
               ./host-volumes.nix
               "${self.inputs.nixpkgs}/nixos/modules/profiles/headless.nix"
               "${self.inputs.nixpkgs}/nixos/modules/virtualisation/ec2-data.nix"
+              {
+                services.nomad.client.chroot_env = {
+                  "/etc/resolv.conf" = "/etc/resolv.conf";
+                  "/etc/services" = "/etc/services";
+                };
+              }
             ];
 
             securityGroupRules = {
