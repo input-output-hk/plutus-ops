@@ -17,7 +17,7 @@ import (
         }
         #portRangeBase: *null | uint
         #hosts: "`\(#domain)`"
-        #testnet: bool
+        #useTestnet: bool
 
         namespace: string
 
@@ -26,14 +26,14 @@ import (
         group: server: {
                 network: {
                         mode: "host"
-                        if ! #testnet {
+                        if ! #useTestnet {
                                 port: "marlowe-run": { static: #portRangeBase }
                                 port: "pab-node": { static: #portRangeBase + 1 }
                                 port: "pab-chain-index": { static: #portRangeBase + 2 }
                                 port: "pab-signing-process": { static: #portRangeBase + 3 }
                                 port: "pab-wallet": { static: #portRangeBase + 4 }
                         }
-                        if #testnet {
+                        if #useTestnet {
                                 port: "pab": {}
                                 port: "node": {}
                                 port: "wbe": {}
@@ -45,10 +45,10 @@ import (
 
                 service: "\(namespace)-marlowe-run": {
                         address_mode: "host"
-                        if #testnet {
+                        if #useTestnet {
                           port:     "pab"
                         }
-                        if ! #testnet {
+                        if ! #useTestnet {
                           port:     "marlowe-run"
                         }
 
@@ -69,10 +69,10 @@ import (
 
                         check: "health": {
                                 type:     "http"
-                                if #testnet {
+                                if #useTestnet {
                                   port:     "pab"
                                 }
-                                if ! #testnet {
+                                if ! #useTestnet {
                                   port:     "marlowe-run"
                                 }
                                 interval: "10s"
@@ -81,7 +81,7 @@ import (
                         }
                 }
 
-                if #testnet {
+                if #useTestnet {
 		  service: "\(namespace)-marlowe-run-server": {
 			address_mode: "host"
 			port:  "run"
@@ -107,7 +107,7 @@ import (
                   read_only:  false
                 }
 
-		if #testnet {
+		if #useTestnet {
                   volume: "node": types.#stanza.volume & {
                     type: "host"
                     source: "node"
@@ -152,10 +152,10 @@ import (
                         #flake:     #flakes.marloweRun
                         #namespace: namespace
                         #fqdn: #fqdn
-                        if #testnet {
+                        if #useTestnet {
                             #memory: 2048
                         }
-                        if ! #testnet {
+                        if ! #useTestnet {
                             #memory: 8129
                         }
                         #domain: #domain
@@ -165,7 +165,7 @@ import (
                         }
                         #extraEnv: {
 			  PAB_STATE_DIR: "/var/lib/pab/\(#namespace)"
-			  if ! #testnet {
+			  if ! #useTestnet {
                             PORT_RANGE_BASE: "\(#portRangeBase)"
 		          }
                         }
