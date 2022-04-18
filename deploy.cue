@@ -176,6 +176,18 @@ Namespace: [Name=_]: {
 		}
 	}
 
+	"marlowe-pioneers": {
+		vars: {
+			#revs: revisions["currentSprintMarlowe"]
+			#variant: "marlowe"
+			#testnet: "testnet-pioneers"
+		}
+		jobs: #jobs & {
+			#namespace: "marlowe-pioneers"
+			#variant: "marlowe"
+		}
+	}
+
 	"plutus-production": {
 		vars: {
 			#revs: revisions["plutusProduction"]
