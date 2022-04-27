@@ -148,6 +148,8 @@ import (
 
                 }
 
+                task: promtail: tasks.#Promtail
+
                 task: "marlowe-run": tasks.#SimpleTask & {
                         #flake:     #flakes.marloweRun
                         #namespace: namespace
