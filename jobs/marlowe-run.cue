@@ -141,7 +141,7 @@ import (
                   }
 
                   task: "server": tasks.#SimpleTask & {
-                    #memory: 2048
+                    #memory: 1024
                     #cpu: 2000
                     #flake: #flakes.marloweRunServer
                   }
@@ -154,12 +154,7 @@ import (
                         #flake:     #flakes.marloweRun
                         #namespace: namespace
                         #fqdn: #fqdn
-                        if #useTestnet {
-                            #memory: 2048
-                        }
-                        if ! #useTestnet {
-                            #memory: 8129
-                        }
+                        #memory: 4096
                         #domain: #domain
                         #volumeMount: "pab": types.#stanza.volume_mount & {
                           volume: "pab"
