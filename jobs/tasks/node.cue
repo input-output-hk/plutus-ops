@@ -7,7 +7,7 @@ import (
 #NodeTask: #SimpleTask & {
   #stateVolume: string
 
-  #memory: 4096
+  #memory: 2048
 
   #namespace: string
 
