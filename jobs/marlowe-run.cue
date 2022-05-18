@@ -85,9 +85,9 @@ import (
                                 if ! #useTestnet {
                                   port:     "marlowe-run"
                                 }
-                                interval: "10s"
+                                interval: "1m"
                                 path:     "/api/healthcheck"
-                                timeout:  "2s"
+                                timeout:  "20s"
                         }
                 }
 

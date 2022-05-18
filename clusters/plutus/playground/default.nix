@@ -71,11 +71,12 @@ in
       desiredCapacity = 8;
       node_class = "client";
       instanceType = "c5.2xlarge";
-    } {
-      desiredCapacity = 4;
-      node_class = "client_highmem";
-      instanceType = "c5.4xlarge";
-    }]
+    }
+      {
+        desiredCapacity = 4;
+        node_class = "client_highmem";
+        instanceType = "c5.4xlarge";
+      }]
       (args:
         let
           attrs = ({
