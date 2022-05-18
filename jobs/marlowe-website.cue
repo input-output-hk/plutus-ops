@@ -22,6 +22,11 @@ import (
 
 	type: "service"
 
+	constraints: [{
+		attribute: "${node.class}",
+		value: "client"
+	}]
+
 	group: server: {
 		network: {
 			mode: "host"

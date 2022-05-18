@@ -23,6 +23,16 @@ import (
 
         type: "service"
 
+        constraints: [{
+                attribute: "${node.class}",
+                if ! #useTestnet {
+                        value: "client"
+                }
+                if #useTestnet {
+                        value: "client_highmem"
+                }
+        }]
+
         group: server: {
                 network: {
                         mode: "host"
@@ -82,24 +92,24 @@ import (
                 }
 
                 if #useTestnet {
-		  service: "\(namespace)-marlowe-run-server": {
-			address_mode: "host"
-			port:  "run"
+                  service: "\(namespace)-marlowe-run-server": {
+                        address_mode: "host"
+                        port:  "run"
 
-			tags: [
-				namespace,
-				"ingress",
-				"traefik.enable=true",
-				"traefik.http.routers.\(namespace)-marlowe-run-server.rule=Host(\(#hosts)) && PathPrefix(`/api`)",
-				"traefik.http.routers.\(namespace)-marlowe-run-server.entrypoints=https",
-				"traefik.http.routers.\(namespace)-marlowe-run-server.tls=true",
-				"traefik.http.routers.\(namespace)-marlowe-run-server.middlewares=\(namespace)-marlowe-run-server-ratelimit@consulcatalog",
-				"traefik.http.middlewares.\(namespace)-marlowe-run-server-ratelimit.ratelimit.average=\(#rateLimit.average)",
-				"traefik.http.middlewares.\(namespace)-marlowe-run-server-ratelimit.ratelimit.burst=\(#rateLimit.burst)",
-				"traefik.http.middlewares.\(namespace)-marlowe-run-server-ratelimit.ratelimit.period=\(#rateLimit.period)",
-			  ]
-		  }
-		}
+                        tags: [
+                                namespace,
+                                "ingress",
+                                "traefik.enable=true",
+                                "traefik.http.routers.\(namespace)-marlowe-run-server.rule=Host(\(#hosts)) && PathPrefix(`/api`)",
+                                "traefik.http.routers.\(namespace)-marlowe-run-server.entrypoints=https",
+                                "traefik.http.routers.\(namespace)-marlowe-run-server.tls=true",
+                                "traefik.http.routers.\(namespace)-marlowe-run-server.middlewares=\(namespace)-marlowe-run-server-ratelimit@consulcatalog",
+                                "traefik.http.middlewares.\(namespace)-marlowe-run-server-ratelimit.ratelimit.average=\(#rateLimit.average)",
+                                "traefik.http.middlewares.\(namespace)-marlowe-run-server-ratelimit.ratelimit.burst=\(#rateLimit.burst)",
+                                "traefik.http.middlewares.\(namespace)-marlowe-run-server-ratelimit.ratelimit.period=\(#rateLimit.period)",
+                          ]
+                  }
+                }
 
                 volume: "pab": types.#stanza.volume & {
                   type:       "host"
@@ -107,7 +117,7 @@ import (
                   read_only:  false
                 }
 
-		if #useTestnet {
+                if #useTestnet {
                   volume: "node": types.#stanza.volume & {
                     type: "host"
                     source: "node"
@@ -121,7 +131,7 @@ import (
                   }
 
                   task: "wbe": tasks.#SimpleTask & {
-                    #memory: 2048
+                    #memory: 2000
                     #cpu: 2000
                     #flake: #flakes.wbe
                   }
@@ -141,7 +151,7 @@ import (
                   }
 
                   task: "server": tasks.#SimpleTask & {
-                    #memory: 1024
+                    #memory: 1000
                     #cpu: 2000
                     #flake: #flakes.marloweRunServer
                   }
@@ -154,17 +164,22 @@ import (
                         #flake:     #flakes.marloweRun
                         #namespace: namespace
                         #fqdn: #fqdn
-                        #memory: 8192
+                        if ! #useTestnet {
+                          #memory: 4096
+                        }
+                        if #useTestnet {
+                          #memory: 24000
+                        }
                         #domain: #domain
                         #volumeMount: "pab": types.#stanza.volume_mount & {
                           volume: "pab"
                           destination: "/var/lib/pab"
                         }
                         #extraEnv: {
-			  PAB_STATE_DIR: "/var/lib/pab/\(#namespace)"
-			  if ! #useTestnet {
+                          PAB_STATE_DIR: "/var/lib/pab/\(#namespace)"
+                          if ! #useTestnet {
                             PORT_RANGE_BASE: "\(#portRangeBase)"
-		          }
+                          }
                         }
                 }
         }

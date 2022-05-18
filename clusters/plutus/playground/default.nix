@@ -68,16 +68,19 @@ in
     flakePath = ../../..;
 
     autoscalingGroups = listToAttrs (forEach [{
-      region = "eu-central-1";
-      desiredCapacity = 12;
+      desiredCapacity = 8;
+      node_class = "client";
+      instanceType = "c5.2xlarge";
+    } {
+      desiredCapacity = 4;
+      node_class = "client_highmem";
+      instanceType = "c5.4xlarge";
     }]
       (args:
         let
           attrs = ({
-            desiredCapacity = 1;
+            region = "eu-central-1";
             maxSize = 40;
-            node_class = "client";
-            instanceType = "c5.2xlarge";
             associatePublicIP = true;
             maxInstanceLifetime = 0;
             iam.role = cluster.iam.roles.client;

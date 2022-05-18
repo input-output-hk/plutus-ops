@@ -25,6 +25,11 @@ import (
 
 	type: "service"
 
+	constraints: [{
+		attribute: "${node.class}",
+		value: "client"
+	}]
+
 	group: "\(#variant)-playground": {
 		network: {
 			mode: "host"
