@@ -178,7 +178,7 @@ Namespace: [Name=_]: {
 
 	"marlowe-pioneers": {
 		vars: {
-			#revs: revisions["currentSprintMarlowe"]
+			#revs: revisions["marlowePioneers"]
 			#variant: "marlowe"
 			#testnet: "testnet-pioneers"
 		}

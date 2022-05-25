@@ -9,6 +9,7 @@ import (
 	"github.com/input-output-hk/plutus-ops/pkg/revisions/plutusStaging:plutusStaging"
 	"github.com/input-output-hk/plutus-ops/pkg/revisions/pablo:pablo"
 	"github.com/input-output-hk/plutus-ops/pkg/revisions/shlevy:shlevy"
+	"github.com/input-output-hk/plutus-ops/pkg/revisions/marlowePioneers:marlowePioneers"
 )
 
 "production": production
@@ -19,3 +20,4 @@ import (
 "pablo": pablo
 "shlevy": shlevy
 "currentSprintMarlowe": currentSprintMarlowe
+"marlowePioneers": marlowePioneers
