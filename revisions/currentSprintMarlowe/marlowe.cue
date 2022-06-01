@@ -1,3 +1,3 @@
 package currentSprintMarlowe
 
-marlowe: "f1885b523454ca3d16826be82114418bdb459ae9"
+marlowe: "6e60acf966c1547382a97ebc40f08dd82c2afee8"
