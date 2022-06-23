@@ -1,3 +1,3 @@
 package plutusStaging
 
-plutus: "df9ce7d4f7f68c6f7f4145eb31f656591dc91427"
+plutus: "5c4647157152e93af6184f91965eda239c0da9e3"
