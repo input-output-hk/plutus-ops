@@ -22,6 +22,8 @@ in
   users.users.builder.isSystemUser = true;
 
   services.nomad.namespaces = {
+    dev-node.description = "Marlowe dev testnet CI node";
+
     production.description = "Marlowe Production";
 
     plutus-production.description = "Plutus Apps Production";

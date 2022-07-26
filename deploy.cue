@@ -54,6 +54,7 @@ Namespace: [Name=_]: {
 
 					marloweRun:          =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#\(prefix)marlowe-run-entrypoint"
 					node:                =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#\(prefix)node"
+					nodeSocat:           =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#node-socat"
 					wbe:                 =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#\(prefix)wbe"
 					chainIndex:          =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#\(prefix)chain-index"
 					marloweRunServer:    =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#\(prefix)marlowe-run-server-entrypoint"
@@ -140,6 +141,19 @@ Namespace: [Name=_]: {
 #namespaces: Namespace
 
 #namespaces: {
+	"dev-node": {
+		vars: {
+			#revs: revisions["currentSprintMarlowe"] // TODO switch to main
+			#variant: "marlowe"
+			#testnet: "testnet-dev"
+		}
+		jobs: {
+			"ci-node": jobDef.#CiNodeJob & {
+				#domain: "dev-ci-node.marlowe-finance.io"
+			}
+		}
+	}
+
 	"production": {
 		vars: {
 			#revs: revisions["production"]
