@@ -33,9 +33,9 @@ Namespace: [Name=_]: {
 				"plutus-playground-client":  =~flakePath | *"github:input-output-hk/plutus-apps?rev=\(#revs.plutus)#plutus-playground-client-entrypoint"
 			}
 			if #variant == "marlowe" {
-				webGhcServer:                =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(*#revs.marlowePlay | #revs.marlowe)#web-ghc-server-entrypoint"
-				"marlowe-playground-server": =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(*#revs.marlowePlay | #revs.marlowe)#marlowe-playground-server-entrypoint"
-				"marlowe-playground-client": =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(*#revs.marlowePlay | #revs.marlowe)#marlowe-playground-client-entrypoint"
+				webGhcServer:                =~flakePath | *"github:input-output-hk/marlowe-playground?rev=\(#revs.marlowePlay)#web-ghc-server-entrypoint"
+				"marlowe-playground-server": =~flakePath | *"github:input-output-hk/marlowe-playground?rev=\(#revs.marlowePlay)#marlowe-playground-server-entrypoint"
+				"marlowe-playground-client": =~flakePath | *"github:input-output-hk/marlowe-playground?rev=\(#revs.marlowePlay)#marlowe-playground-client-entrypoint"
 
 				marloweWebsite:              =~flakePath | *"github:input-output-hk/marlowe-website?rev=\(#revs.marloweWebsite)#marlowe-website-entrypoint"
 				if #testnet == null {
