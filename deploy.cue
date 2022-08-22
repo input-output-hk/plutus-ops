@@ -33,31 +33,21 @@ Namespace: [Name=_]: {
 				"plutus-playground-client":  =~flakePath | *"github:input-output-hk/plutus-apps?rev=\(#revs.plutus)#plutus-playground-client-entrypoint"
 			}
 			if #variant == "marlowe" {
-				webGhcServer:                =~flakePath | *"github:input-output-hk/marlowe-playground?rev=\(#revs.marlowePlay)#web-ghc-server-entrypoint"
-				"marlowe-playground-server": =~flakePath | *"github:input-output-hk/marlowe-playground?rev=\(#revs.marlowePlay)#marlowe-playground-server-entrypoint"
-				"marlowe-playground-client": =~flakePath | *"github:input-output-hk/marlowe-playground?rev=\(#revs.marlowePlay)#marlowe-playground-client-entrypoint"
+				webGhcServer:                =~flakePath | *"github:input-output-hk/marlowe-playground?rev=\(#revs.marlowePlay)#entrypoints.web-ghc-server-entrypoint"
+				"marlowe-playground-server": =~flakePath | *"github:input-output-hk/marlowe-playground?rev=\(#revs.marlowePlay)#entrypoints.marlowe-playground-server-entrypoint"
+				"marlowe-playground-client": =~flakePath | *"github:input-output-hk/marlowe-playground?rev=\(#revs.marlowePlay)#entrypoints.marlowe-playground-client-entrypoint"
 
 				marloweWebsite:              =~flakePath | *"github:input-output-hk/marlowe-website?rev=\(#revs.marloweWebsite)#marlowe-website-entrypoint"
 				if #testnet == null {
-					marloweRun:          =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#marlowe-run-entrypoint"
+					marloweRun:          =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#entrypoints.marlowe-run-entrypoint"
 				}
 				if #testnet != null {
-					// Temporary until all testnet branches are updated to use the prefix
-					let prefix = {
-						if #testnet == "testnet-dev" {
-							""
-						}
-						if #testnet != "testnet-dev" {
-							"\(#testnet)."
-						}
-					}
-
-					marloweRun:          =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#\(prefix)marlowe-run-entrypoint"
-					node:                =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#\(prefix)node"
-					nodeSocat:           =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#node-socat"
-					wbe:                 =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#\(prefix)wbe"
-					chainIndex:          =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#\(prefix)chain-index"
-					marloweRunServer:    =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#\(prefix)marlowe-run-server-entrypoint"
+					marloweRun:          =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#entrypoints.\(#testnet).marlowe-run-entrypoint"
+					node:                =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#entrypoints.\(#testnet).node"
+					nodeSocat:           =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#entrypoints.node-socat"
+					wbe:                 =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#entrypoints.\(#testnet).wbe"
+					chainIndex:          =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#entrypoints.\(#testnet).chain-index"
+					marloweRunServer:    =~flakePath | *"github:input-output-hk/marlowe-cardano?rev=\(#revs.marlowe)#entrypoints.\(#testnet).marlowe-run-server-entrypoint"
 				}
 			}
 		}
@@ -143,7 +133,7 @@ Namespace: [Name=_]: {
 #namespaces: {
 	"dev-node": {
 		vars: {
-			#revs: revisions["currentSprintMarlowe"] // TODO switch to main
+			#revs: revisions["staging"]
 			#variant: "marlowe"
 			#testnet: "testnet-dev"
 		}
@@ -164,8 +154,8 @@ Namespace: [Name=_]: {
 			#portBase: 1776
 			#variant: "marlowe"
 		}
-
 	}
+
 	"staging": {
 		vars: {
 			#revs: revisions["staging"]
@@ -174,18 +164,6 @@ Namespace: [Name=_]: {
 		}
 		jobs: #jobs & {
 			#namespace: "staging"
-			#variant: "marlowe"
-		}
-	}
-
-	"currentSprintMarlowe": {
-		vars: {
-			#revs: revisions["currentSprintMarlowe"]
-			#variant: "marlowe"
-			#testnet: "testnet-dev"
-		}
-		jobs: #jobs & {
-			#namespace: "currentSprintMarlowe"
 			#variant: "marlowe"
 		}
 	}
@@ -242,10 +220,10 @@ Namespace: [Name=_]: {
 		vars: {
 			#revs: revisions["pablo"]
 			#variant: "marlowe"
+			#testnet: "testnet-dev"
 		}
 		jobs: #jobs & {
 			#namespace: "pablo"
-			#portBase: 1831
 			#variant: "marlowe"
 		}
 

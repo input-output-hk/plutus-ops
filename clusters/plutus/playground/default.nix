@@ -30,8 +30,6 @@ in
 
     staging.description = "Staging";
 
-    currentSprintMarlowe.description = "Marlowe Current Sprint";
-
     plutus-staging.description = "Plutus Apps Staging";
 
     hernan.description = "Hernán's ad hoc environment";
