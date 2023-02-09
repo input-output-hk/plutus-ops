@@ -1,3 +1,3 @@
 package staging
 
-marlowe: "fce2c73ff8d4eab811c7310598bd9279de01f522"
+marlowe: "39b2f92a6ad8ad12e7b04e251587aec5ef0f11e1"
