@@ -57,7 +57,6 @@ in
     extraAcmeSANs = [
       "*.marlowe-finance.io"
       "marlowe-finance.io"
-      "playground.plutus.iohkdev.io"
     ];
     kms =
       "arn:aws:kms:eu-central-1:048156180985:key/7aa3ec8c-168f-42b8-9f77-6f5d7a9002d0";
